@@ -1,0 +1,232 @@
+Data Science for Developers
+========================================================
+author: Padhu Ramalingam @pramalin
+date: September 6th 2017
+autosize: true
+
+Agenda
+========================================================
+Motivation
+ML Algorithms
+
+
+
+Motivation - 1
+========================================================
+
+CCA Spark and Hadoop Developer Exam (CCA175) Price: USD $295
+
+### Data Ingest
+The skills to transfer data between external systems and your cluster. This includes the following:
+  + Import data from a MySQL database into HDFS using Sqoop
+  + Export data to a MySQL database from HDFS using Sqoop
+  + Change the delimiter and file format of data during import using Sqoop
+  + Ingest real-time and near-real-time streaming data into HDFS
+  + Process streaming data as it is loaded onto the cluster
+  + Load data into and out of HDFS using the Hadoop File System commands
+
+### Transform, Stage, and Store
+Convert a set of data values in a given format stored in HDFS into new data values or a new data format and write them into HDFS.
+  + Load RDD data from HDFS for use in Spark applications
+  + Write the results from an RDD back into HDFS using Spark
+  + Read and write files in a variety of file formats
+  + Perform standard extract, transform, load (ETL) processes on data
+
+### Data Analysis
+Use Spark SQL to interact with the metastore programmatically in your applications. Generate reports by using queries against loaded data.
+  + Use metastore tables as an input source or an output sink for Spark applications
+  + Understand the fundamentals of querying datasets in Spark
+  + Filter data using Spark
+  + Write queries that calculate aggregate statistics
+  + Join disparate datasets using Spark
+  + Produce ranked or sorted data
+
+
+
+Motivation - 2
+========================================================
+Big Data Analysis with Scala and Spark
+
+* Week 1. Wikipedia Ranking - Count programming languages
+* Week 2. StackOverflow - K Means Cluster - higher voted answers
+* Week 3. 
+* Week 4. Summarize [American Time Usage Survey] (https://www.kaggle.com/bls/american-time-use-survey) (Dataframe / SQL)
+
+Machine Learning APIs _not_ covered. 
+
+Machine Learning Algorithms
+========================================================
+Supervised Learning
+  * Regression
+    + Linear Regression
+    + Logistic Regression
+  
+  * Classification
+    + Classification and Regression Trees
+    + Naive Bayes
+    + Support Vector Machine
+  
+Unsupervised Learning
+  * Clustering
+    + Hierarchical Clustering
+    + K-Means Clustering
+
+
+ML Algorithms & Applications
+========================================================
+
+| Algorithm | Application Examples | Assignments |
+|-----------|----------------------|-------------|
+|	Linear Regression |  Wine, Moneyball | Is Climate Change caused by human, predicting test score, Detecting Flu epidemic via search queries, Predicting Life expectancy from State data |
+|	Logistic Regression | Modeling an Expert, The Framingham Heart Study, Election forecasting | Predict popularity of a song, Predicting Parole Violators, Predicting Loan Repayment, Predicting Baseball World Series Champion |
+|	Trees	| Predicting Supreme Court Decisions, The D2Hawkeye Story (Predict health care cost) | Social Experiment - Understanding why people vote, Letter recognition, Predict earning from Census data,   |
+|	Text Analytics	| Turning Tweets into Knowledge, IBM Watson | Detecting vandalism on Wikipedia, Automating reviews in medicine (is it clinical trial?), seperating Spam, |
+|	Clustering	| Recommendation Systems, Predictive Diagnosis | Automatically Tagging blog articles, Market segmentation for Airlines, Predicting stock returns (clustering + regression) |
+|	Linear Optimization	| Airline Revenue Management, Radiation Therapy | Investment management, Outsourcing strategy in Italian textiles, Gasoline blending, Farm produce sales strategy |
+|	Integer Optimization| Sports Scheduling, eHarmony, operating room scheduler | Selecting profitable hotel sites, Assigning Sales regions, class assignments in elementary school  |
+
+Data Structures
+========================================================
+
+# $Data Structures + Algorithms = Programs$
+   Niklaus Wirth
+![](./assets/algorithms-data-structures-programs.jpg)
+
+Basic Calculations
+========================================================
+```{r}
+8*6
+2^16
+```
+
+Functions
+========================================================
+```{r}
+sqrt(2)
+abs(-65)
+```
+
+Variables
+========================================================
+``` {r}
+SquareRoot2 = sqrt(2)
+# or SquareRoot2 <- sqrt(2)
+
+```
+
+
+Vectors
+========================================================
+```{r}
+Country = c("Brazil", "China", "India","Switzerland","USA")
+LifeExpectancy = c(74,76,65,83,79)
+Country
+LifeExpectancy
+Country[1]
+LifeExpectancy[3]
+Sequence = seq(0,100,2)
+Sequence
+```
+
+Data Frames
+========================================================
+```{r}
+CountryData = data.frame(Country, LifeExpectancy)
+CountryData
+CountryData$Population = c(199000,1390000,1240000,7997,318000)
+CountryData
+Country = c("Australia","Greece")
+LifeExpectancy = c(82,81)
+Population = c(23050,11125)
+NewCountryData = data.frame(Country, LifeExpectancy, Population)
+NewCountryData
+AllCountryData = rbind(CountryData, NewCountryData)
+AllCountryData
+```
+
+
+Loading CSV Files
+========================================================
+
+```{r}
+
+WHO = read.csv("WHO.csv")
+str(WHO)
+```
+
+Summary(Data Frame)
+========================================================
+```{r}
+summary(WHO)
+```
+
+Basic data analysis
+========================================================
+sd = $\sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$
+  
+
+```{r}
+mean(WHO$Under15)
+sd(WHO$Under15)
+summary(WHO$Under15)
+
+which.min(WHO$Under15)
+WHO$Country[86]
+
+which.max(WHO$Under15)
+WHO$Country[124]
+```
+
+Linear Regression
+========================================================
+
+
+
+Clustring
+========================================================
+   [Analytics Edge Course Material] (file:///C:/home/presentations/ml-jaxjug/Unit6_Clustering.html)
+
+
+Big Data
+========================================================
+   [PySpark code] (file:///C:/home/presentations/ml-jaxjug/classification.py)
+
+Big Data - compared to R
+========================================================
+```{r}
+weather = read.csv("daily_weather.csv")
+
+#str(weather)
+#summary(weather)
+weather$low_humidity_day = as.numeric(weather$relative_humidity_3pm < 25)
+
+library(caTools)
+library(rpart)
+library(rpart.plot)
+
+set.seed(12345) # to get the same split everytime
+spl = sample.split(weather$low_humidity_day, SplitRatio = 0.8)
+train = subset(weather, spl==TRUE)
+test = subset(weather, spl==FALSE)
+
+weatherTree = rpart(low_humidity_day ~ air_pressure_9am + air_temp_9am + avg_wind_direction_9am + avg_wind_speed_9am + max_wind_direction_9am + max_wind_speed_9am + rain_accumulation_9am + rain_duration_9am, data=weather, method="class", minbucket=20)
+# prp(weatherTree)
+
+predictWeather = predict(weatherTree, newdata = test, type="class")
+cmat = table(test$low_humidity_day, predictWeather)
+cmat
+(cmat[1,1] + cmat[2,2])/sum(cmat)
+```
+
+R Code
+========================================================
+```{r}
+summary(cars)
+```
+
+Slide With Plot
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```

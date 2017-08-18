@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!-- saved from url=(0272)https://pippio.com/api/sync?pid=1391&ref=https%3A%2F%2Frpubs.com%2Fnishantsbi%2F90574&it=1&iv=c964u6nf2fgqn6e&it=4&iv=8de39d539c04896fe67e9b0e2292e9e7&it=4&iv=8d5efcc50ae0a6d76c5e08de574a2f88a1a9610a&it=4&iv=b72735432d4694a6f8d43aaae60e78cd1c5be1a8424ac9364abcac20dc62cff2 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><script>
+		var f = function () {
+	function loadChains(chains, limit, onChainDone) {
+    function newImageLoader(url) {
+        return function () {
+            var e = new Image();
+            addListeners(e);
+            e.src = url;
+        };
+    }
+
+    function newScriptLoader(url) {
+        return function () {
+            var e = document.createElement('script');
+            e.type = 'text/javascript';
+            e.async = true;
+            addListeners(e);
+            e.src = url;
+            document.head.appendChild(e);
+        };
+    }
+
+    function newIframeLoader(url) {
+        return function () {
+            var e = document.createElement('iframe');
+            e.style.display = 'none';
+            e.width = 1;
+            e.height = 1;
+            addListeners(e);
+            e.src = url;
+            document.body.appendChild(e);
+        };
+    }
+
+    function addListeners(e) {
+        addLoadErrorListeners(e, loadNext);
+        if (typeof onChainDone === 'function') {
+            addLoadErrorListeners(e, onChainDone);
+        }
+    }
+
+    function addLoadErrorListeners(e, listener) {
+        if (typeof e.addEventListener === 'function') {
+            e.addEventListener('load', listener, false);
+            e.addEventListener('error', listener, false);
+        } else if (typeof e.attachEvent === 'function') {
+            e.attachEvent('onload', listener);
+            e.attachEvent('onerror', listener);
+        }
+    }
+
+    function loadNext() {
+        var next = loaders.shift();
+        if (typeof next === "function") {
+            setTimeout(next);
+        }
+    }
+
+    var loaders = chains.reduce(function (acc, value) {
+        var mode = value[0];
+        var url = value[1];
+
+        switch (mode) {
+            case 'image':
+                acc.push(newImageLoader(url));
+                break;
+            case 'script':
+                acc.push(newScriptLoader(url));
+                break;
+            case 'iframe':
+                acc.push(newIframeLoader(url));
+                break;
+        }
+        return acc;
+    }, []);
+
+    for (var i = 0; i < limit; i++) {
+        loadNext();
+    }
+}
+
+	var chains = [];
+	chains.push(['image', 'https://ei.rlcdn.com/448046.gif?n=1&partner_site_id=1017&m=aedf1bd5c26c683c966f4402e61ec12a&s=6c6258a38f2763cec52995d0b6f6f0d8652721ce&s256=5dc22a0c0e42906cc217e001bd64ca0d584d560c4b481b800aef3c657a2e3c32']);
+	chains.push(['image', 'https://ib.adnxs.com/getuid?https%3A%2F%2Fs.cpx.to%2Fca.png%3Fref%3Dhttps%253A%252F%252Frpubs.com%252Fnishantsbi%252F90574%26pid%3D11718%26url%3Dhttps%253A%252F%252Frpubs.com%252Fnishantsbi%252F90574%26adnxs_uid%3D%24UID']);
+	chains.push(['image', 'https://ps.eyeota.net/pixel?pid=jbc9gd0&t=gif&cat=gs_business&cat=gs_business_careers&cat=gs_business_sme&cat=gs_education&cat=gs_education_misc&cat=gs_entertain&cat=gs_entertain_tv&cat=gs_finance&cat=gs_finance_loans&cat=gs_food&cat=gs_food_misc&cat=gs_health&cat=gs_health_sexuality&cat=gs_home&cat=gs_home_gardening&cat=gs_home_pets&cat=gs_politics&cat=gs_politics_misc&cat=gs_science&cat=gs_science_environ&cat=gs_science_space&cat=gs_society&cat=gs_society_misc&cat=gs_sport&cat=gs_sport_soccer&cat=gs_tech&cat=gs_tech_computing&cat=gs_tech_phones&cat=gs_tech_social']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=6']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=7']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=9']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=8']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=2']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=5']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=10']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=11']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=3']);
+	chains.push(['image', 'https://rc.rlcdn.com/456809.gif?n=4']);
+	chains.push(['image', 'https://idsync.rlcdn.com/394479.gif?partner_uid=M91F1Z2woWW88DqekpkS-0RrN8E']);
+
+	loadChains(chains, 10, (typeof onDone === "function") ? onDone : null);
+		};
+
+		if (document.body) { f(); } else { document.addEventListener('DOMContentLoaded', f); }
+	</script>
+</head><body></body></html>

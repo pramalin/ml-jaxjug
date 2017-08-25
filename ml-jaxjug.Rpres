@@ -166,14 +166,32 @@ Loading CSV Files
 WHO = read.csv("WHO.csv")
 str(WHO)
 ```
+WHO Data Set 
+========================================================
+This dataset contains recent statistics about 194 countries from the World
+Health Organization (*WHO*).
+
+| Variable | Descreption |
+|----------|---------------------------------|
+| *Country* | Country name |
+| *Region* | the region the country is in | 
+| *Population* | the population of the country in thousands|
+| *Under15* | the percentage of the population under 15 years of age |
+| *Over60* |the percentage of the population over 60 years of age |
+| *FertilityRate* | the average number of children per woman |
+| *LifeExpectancy* | the life expectancy in years |
+| *CellularSubscribers* | the number of cellular subscribers per 100 population |
+| *LiteracyRate* | the literacy rate among adults at least 15 years of age |
+| *GNI* | and the gross national income per capita |
+
 
 Stats Summary
 ========================================================
 
-
 ```{r}
 summary(WHO)
 ```
+
 ## $$sd = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
 
 Basic data analysis
@@ -252,7 +270,19 @@ Linear Regression - Correlation
   
   *R^2 = 1 - 18/24 = 0.25.*
 
-Wine Quality
+Wine Quality - Data Set
+========================================================
+| Variable | Description |
+|-----------|----------------------------------------|  
+| Year | The year the wine was produced.|
+| Price | A measurement of wine quality computed by Ashenfelter.|
+|WinterRain | The amount of winter rain the year the wine was produced, measured in millimeters.|
+|AGST | The average growing season temperature the year the wine was produced, measured in degrees Celsius.|
+|HarvestRain | The amount of rain during harvest season (August and September) the year the wine was produced, measured in millimeters.|
+|Age | The age of the wine, relative to 1983.|
+|FrancePop | The population of France the year the wine was produced.|
+
+Wine Quality - Linear Regression
 ========================================================
  [Video] https://www.youtube.com/watch?v=vI3envXmyDs
 ```{r}
@@ -370,14 +400,295 @@ SST<-sum((wineTest$Price - mean(wine$Price))^2)
 Logistic Regression
 ========================================================
 
-# $P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$
-# $=\frac{1}{1 + e^{-logit}}$
+## $$P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$$
+## $$=\frac{1}{1 + e^{-logit}}$$
 ```{r, echo=FALSE}
 logFunc <- function(x) {1 / (1+exp(-x))}
 xlab = expression("beta_0 + beta_1*x_1 + beta_2*x_2 + ... + beta_k*x_k")
 curve(logFunc, from=-4.5, to=4.5, xlab=xlab, ylab="P(y=1)")
 ```
 
+THE FRAMINGHAM HEART STUDY
+========================================================
+```{r}
+framingham = read.csv("framingham.csv")
+# Look at structure
+str(framingham)
+# Load the library caTools
+library(caTools)
+
+# Randomly split the data into training and testing sets
+set.seed(1000)
+split = sample.split(framingham$TenYearCHD, SplitRatio = 0.65)
+
+# Split up the data using subset
+train = subset(framingham, split==TRUE)
+test = subset(framingham, split==FALSE)
+```
+THE FRAMINGHAM HEART STUDY - Logistic Regression
+========================================================
+```{r}
+# Logistic Regression Model
+framinghamLog = glm(TenYearCHD ~ ., data = train, family=binomial)
+summary(framinghamLog)
+```
+
+THE FRAMINGHAM HEART STUDY - Predictions
+========================================================
+```{r}
+# Predictions on the test set
+predictTest = predict(framinghamLog, type="response", newdata=test)
+
+# Confusion matrix with threshold of 0.5
+table(test$TenYearCHD, predictTest > 0.5)
+
+# Overall Accuracy of the model
+(1069+11)/(1069+6+187+11)
+
+#this needs to be compared with Baseline model
+# Baseline accuracy/model
+prop.table(table(framingham$TenYearCHD))
+
+#Our model barely beats the baseline model.Is our model worthy?
+```
+
+Modeling the Expert
+========================================================
+```{r}
+# Read in dataset
+quality = read.csv("quality.csv")
+
+# Look at structure
+str(quality)
+
+# Table outcome for DV
+table(quality$PoorCare)
+
+# Baseline accuracy (in a classification problem, the standard baseline method is to just predict the most frequent outcome for all observations)
+98/131
+#This is the baseline model which we will try to beat with our logistic model
+```
+
+Modeling the Expert - Visualization
+========================================================
+```{r, echo=FALSE}
+qualityFilter = quality[quality$PoorCare==1,] # Stores which observations had good care
+plot(quality$OfficeVisits, quality$Narcotics, pch=20, cex=2, col="green") # plots all observations in green
+points(qualityFilter$OfficeVisits, qualityFilter$Narcotics, col="red", pch=20, cex=2) # plots all observations that had poor care in red 
+lines(c(-2,30),c(30,-2), col="blue", lwd=3) # This line helps us to see that above a certain point there seems to be more and more patients with good care.
+
+```
+Modeling the Expert - Split Samples
+========================================================
+```{r}
+# Install and load caTools package
+#install.packages("caTools")
+library(caTools)
+
+# Randomly split data
+set.seed(88)
+split = sample.split(quality$PoorCare, SplitRatio = 0.75) #the DV is split into 75% which we get from baseline accuracy above
+split # TRUE means we should put that obs in Training set and FALSE means that obs should be put in testing set
+
+# Create training and testing sets
+qualityTrain = subset(quality, split == TRUE)
+qualityTest = subset(quality, split == FALSE)
+
+nrow(qualityTrain)
+nrow(qualityTest)
+```
+
+Modeling the Expert - Logistic Regression
+========================================================
+```{r}
+
+# Logistic Regression Model
+QualityLog = glm(PoorCare ~ OfficeVisits + Narcotics, data=qualityTrain, family=binomial)
+summary(QualityLog)
+
+# Make predictions on training set
+predictTrain = predict(QualityLog, type="response") #type="response" gives us probabilities
+
+# Analyze predictions
+summary(predictTrain) # since we are dealing with probabilities, all the nos will be between 0 & 1
+
+#lets see if we are predicting higher probabilities for the actual poorcare cases as we expect
+tapply(predictTrain, qualityTrain$PoorCare, mean) #avg prediction for each of the TRUE outcomes
+
+```
+Modeling the Expert - Thresholding
+========================================================
+```{r}
+# Confusion matrix for threshold of 0.5
+table(qualityTrain$PoorCare, predictTrain > 0.5) #first arg is for the rows(true coutcomes) and second arg is for the col labelling(predicted outcomes)
+
+#Sensitivity=TP/total no of positive cases
+#specificity=TN/total no of negative cases
+c(10/25, 70/74)
+
+table(qualityTrain$PoorCare, predictTrain > 0.7) # Confusion matrix @ threshold of 0.7
+c(8/25, 73/74)
+
+table(qualityTrain$PoorCare, predictTrain > 0.2) # Confusion matrix @ threshold of 0.2
+
+# Sensitivity and specificity
+c(16/2, 54/74)
+
+#from the above we can see that higher threshold value will have LOWER sensitivity & a HIGHER specificity and lower threshold value will have HIGHER  sensitivity & a LOWER specificity 
+#So the big question is how to select the threshold value.
+
+```
+Modeling the Expert - ROC
+========================================================
+```{r}
+# Install and load ROCR package
+#install.packages("ROCR")
+library(ROCR)
+
+# Prediction function
+ROCRpred = prediction(predictTrain, qualityTrain$PoorCare)
+
+# Performance function
+ROCRperf = performance(ROCRpred, "tpr", "fpr") #This defines what we want to plot on x & y axis
+
+# Plot Reciever Operator Characteristic curve
+plot(ROCRperf, colorize=TRUE, print.cutoffs.at=seq(0,1,by=0.1), text.adj=c(-0.2,1.7))
+
+```
+Modeling the Expert - Conclusion
+========================================================
+**Given this ROC curve, which threshold would you pick if you wanted to correctly identify a small group of patients who are receiving the worst care with high confidence?**
+
+*0.7*
+
+EXPLANATION:The threshold 0.7, since at this threshold we make very few false positive mistakes, and identify about 35% of the true positives.
+
+The threshold t = 0.8 is not a good choice, since it makes about the same number of false positives, but only identifies 10% of the true positives.
+
+The thresholds 0.2 and 0.3 both identify more of the true positives, but they make more false positive mistakes, so our confidence decreases.
+
+**Which threshold would you pick if you wanted to correctly identify half of the patients receiving poor care, while making as few errors as possible?**
+
+*0.3*
+
+EXPLANATION:The threshold 0.3 is the best choice in this scenerio. The threshold 0.2 also identifies over half of the patients receiving poor care, but it makes many more false positive mistakes. The thresholds 0.7 and 0.8 don't identify at least half of the patients receiving poor care.
+
+
+Classification and Regression Trees (CART)
+========================================================
+
+This plot shows sample data for two independent variables, _x_ and _y_, and each data point is colored by the outcome variable, red or gray.
+
+CART tries to split this data into subsets so that each subset is as pure or homogeneous as possible.
+
+
+A _CART_ model is represented by a __tree__.
+
+![example](CART_example_tree.png)
+
+The first three splits that CART would create are shown here.
+
+Then the standard prediction made by a _CART_ model is just a __majority vote__ within each subset.
+
+Some advantages of _CART_ are that:
+
+* it __does not assume a linear model__, like logistic regression or linear regression, and 
+* it is a __very interpretable__ model.
+
+
+Predicting Supreme Court Decisions
+========================================================
+```{r}
+stevens = read.csv("stevens.csv", stringsAsFactor = TRUE)
+str(stevens)
+```
+
+Predicting Supreme Court Decisions - Data Set
+========================================================
+| Variable | Description |
+|----------|------------------------------------------------------------|
+| Docket | A unique identifier for each case. |
+| Term | The year of the case.|
+| Circuit | The circuit court of origin of the case. One of 1st - ??? 11th, Federal, or D.C.|
+| Issue | The issue area of the case. Examples are criminal procedure, civil rights, privacy, etc.|
+| Petitioner | The type of petitioner in the case. Examples are an employer, an employee, the United States, etc.|
+| Respondent | The type of respondent in the case. Examples are an employer, an employee, the United States, etc.|
+| LowerCourt | The ideological direction of the lower court ruling, either liberal or conservative.|
+| Unconst | Whether or not the petitioner argued that a law or practice is unconstitutional.|
+| Reverse | Whether or not Justice Stevens voted to reverse the case.|
+
+Predicting Supreme Court Decisions - Summary
+========================================================
+```{r}
+summary(stevens)
+```
+Predicting Supreme Court Decisions - Sample Split
+========================================================
+```{r}
+library(caTools)
+set.seed(100) # to get the same split everytime
+spl1 = sample.split(stevens$Reverse, SplitRatio = 0.7)
+StevensTrain = subset(stevens, spl1==TRUE)
+StevensTest = subset(stevens, spl1==FALSE)
+
+
+#install.packages("rpart")
+library(rpart)
+#install.packages("rpart.plot")
+library(rpart.plot)
+#install.packages("randomForest")
+library(randomForest)
+```
+
+Predicting Supreme Court Decisions - CART
+========================================================
+```{r}
+StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data =StevensTrain, minbucket=25)
+
+prp(StevensTree)
+```
+
+Predicting Supreme Court Decisions - bucket size selection
+========================================================
+```{r}
+set.seed(100)
+spl = sample.split(StevensTrain$Reverse, SplitRatio = 0.5)
+StevensValidateTrain = subset(StevensTrain, spl == TRUE)
+StevensValidateTest = subset(StevensTrain, spl == FALSE)
+
+StevensTree1 = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data = StevensValidateTrain, minbucket=5)
+StevensTree2 = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data = StevensValidateTrain, minbucket=15)
+StevensTree3 = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data = StevensValidateTrain, minbucket=25)
+
+StevensPredict1 = predict(StevensTree1, newdata = StevensValidateTest, type="class")
+StevensPredict2 = predict(StevensTree2, newdata = StevensValidateTest, type="class")
+StevensPredict3 = predict(StevensTree3, newdata = StevensValidateTest, type="class")
+```
+
+Predicting Supreme Court Decisions - Compare trees
+========================================================
+```{r}
+table(StevensValidateTest$Reverse, StevensPredict1) # 5
+table(StevensValidateTest$Reverse, StevensPredict2) # 15
+table(StevensValidateTest$Reverse, StevensPredict3) # 25
+
+```
+The best selection for min bucket is 25.
+
+Predicting Supreme Court Decisions - Final result
+========================================================
+```{r}
+StevensTreeFinal = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data =StevensTrain, minbucket=25)
+StevensPredictTest = predict(StevensTreeFinal, newdata = StevensTest, type="class")
+
+cmat = table(StevensTest$Reverse, StevensPredictTest)
+cmat
+c(cmat[1,1] + cmat[2,2], sum(cmat), (cmat[1,1] + cmat[2,2])/sum(cmat))
+
+# StevensPredictTest
+```
+We end up correctly predicting 112 out of the 170 cases in our test set, for
+an accuracy of 65:9%.
 
 Clustring
 ========================================================

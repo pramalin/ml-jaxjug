@@ -275,10 +275,27 @@ str(WHO)
  $ LiteracyRate       : num  NA NA NA NA 70.1 99 97.8 99.6 NA NA ...
  $ GNI                : num  1140 8820 8310 NA 5230 ...
 ```
+WHO Data Set 
+========================================================
+This dataset contains recent statistics about 194 countries from the World
+Health Organization (*WHO*).
+
+| Variable | Descreption |
+|----------|---------------------------------|
+| *Country* | Country name |
+| *Region* | the region the country is in | 
+| *Population* | the population of the country in thousands|
+| *Under15* | the percentage of the population under 15 years of age |
+| *Over60* |the percentage of the population over 60 years of age |
+| *FertilityRate* | the average number of children per woman |
+| *LifeExpectancy* | the life expectancy in years |
+| *CellularSubscribers* | the number of cellular subscribers per 100 population |
+| *LiteracyRate* | the literacy rate among adults at least 15 years of age |
+| *GNI* | and the gross national income per capita |
+
 
 Stats Summary
 ========================================================
-
 
 
 ```r
@@ -311,6 +328,7 @@ summary(WHO)
  Max.   :196.41      Max.   :99.80   Max.   :86440  
  NA's   :10          NA's   :91      NA's   :32     
 ```
+
 ## $$sd = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
 
 Basic data analysis
@@ -442,7 +460,19 @@ Linear Regression - Correlation
   
   *R^2 = 1 - 18/24 = 0.25.*
 
-Wine Quality
+Wine Quality - Data Set
+========================================================
+| Variable | Description |
+|-----------|----------------------------------------|  
+| Year | The year the wine was produced.|
+| Price | A measurement of wine quality computed by Ashenfelter.|
+|WinterRain | The amount of winter rain the year the wine was produced, measured in millimeters.|
+|AGST | The average growing season temperature the year the wine was produced, measured in degrees Celsius.|
+|HarvestRain | The amount of rain during harvest season (August and September) the year the wine was produced, measured in millimeters.|
+|Age | The age of the wine, relative to 1983.|
+|FrancePop | The population of France the year the wine was produced.|
+
+Wine Quality - Linear Regression
 ========================================================
  [Video] https://www.youtube.com/watch?v=vI3envXmyDs
 
@@ -780,10 +810,618 @@ SST<-sum((wineTest$Price - mean(wine$Price))^2)
 Logistic Regression
 ========================================================
 
-# $P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$
-# $=\frac{1}{1 + e^{-logit}}$
+## $$P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$$
+## $$=\frac{1}{1 + e^{-logit}}$$
 ![plot of chunk unnamed-chunk-25](ml-jaxjug-figure/unnamed-chunk-25-1.png)
 
+THE FRAMINGHAM HEART STUDY
+========================================================
+
+```r
+framingham = read.csv("framingham.csv")
+# Look at structure
+str(framingham)
+```
+
+```
+'data.frame':	4240 obs. of  16 variables:
+ $ male           : int  1 0 1 0 0 0 0 0 1 1 ...
+ $ age            : int  39 46 48 61 46 43 63 45 52 43 ...
+ $ education      : int  4 2 1 3 3 2 1 2 1 1 ...
+ $ currentSmoker  : int  0 0 1 1 1 0 0 1 0 1 ...
+ $ cigsPerDay     : int  0 0 20 30 23 0 0 20 0 30 ...
+ $ BPMeds         : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ prevalentStroke: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ prevalentHyp   : int  0 0 0 1 0 1 0 0 1 1 ...
+ $ diabetes       : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ totChol        : int  195 250 245 225 285 228 205 313 260 225 ...
+ $ sysBP          : num  106 121 128 150 130 ...
+ $ diaBP          : num  70 81 80 95 84 110 71 71 89 107 ...
+ $ BMI            : num  27 28.7 25.3 28.6 23.1 ...
+ $ heartRate      : int  80 95 75 65 85 77 60 79 76 93 ...
+ $ glucose        : int  77 76 70 103 85 99 85 78 79 88 ...
+ $ TenYearCHD     : int  0 0 0 1 0 0 1 0 0 0 ...
+```
+
+```r
+# Load the library caTools
+library(caTools)
+
+# Randomly split the data into training and testing sets
+set.seed(1000)
+split = sample.split(framingham$TenYearCHD, SplitRatio = 0.65)
+
+# Split up the data using subset
+train = subset(framingham, split==TRUE)
+test = subset(framingham, split==FALSE)
+```
+THE FRAMINGHAM HEART STUDY - Logistic Regression
+========================================================
+
+```r
+# Logistic Regression Model
+framinghamLog = glm(TenYearCHD ~ ., data = train, family=binomial)
+summary(framinghamLog)
+```
+
+```
+
+Call:
+glm(formula = TenYearCHD ~ ., family = binomial, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8487  -0.6007  -0.4257  -0.2842   2.8369  
+
+Coefficients:
+                 Estimate Std. Error z value Pr(>|z|)    
+(Intercept)     -7.886574   0.890729  -8.854  < 2e-16 ***
+male             0.528457   0.135443   3.902 9.55e-05 ***
+age              0.062055   0.008343   7.438 1.02e-13 ***
+education       -0.058923   0.062430  -0.944  0.34525    
+currentSmoker    0.093240   0.194008   0.481  0.63080    
+cigsPerDay       0.015008   0.007826   1.918  0.05514 .  
+BPMeds           0.311221   0.287408   1.083  0.27887    
+prevalentStroke  1.165794   0.571215   2.041  0.04126 *  
+prevalentHyp     0.315818   0.171765   1.839  0.06596 .  
+diabetes        -0.421494   0.407990  -1.033  0.30156    
+totChol          0.003835   0.001377   2.786  0.00533 ** 
+sysBP            0.011344   0.004566   2.485  0.01297 *  
+diaBP           -0.004740   0.008001  -0.592  0.55353    
+BMI              0.010723   0.016157   0.664  0.50689    
+heartRate       -0.008099   0.005313  -1.524  0.12739    
+glucose          0.008935   0.002836   3.150  0.00163 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2020.7  on 2384  degrees of freedom
+Residual deviance: 1792.3  on 2369  degrees of freedom
+  (371 observations deleted due to missingness)
+AIC: 1824.3
+
+Number of Fisher Scoring iterations: 5
+```
+
+THE FRAMINGHAM HEART STUDY - Predictions
+========================================================
+
+```r
+# Predictions on the test set
+predictTest = predict(framinghamLog, type="response", newdata=test)
+
+# Confusion matrix with threshold of 0.5
+table(test$TenYearCHD, predictTest > 0.5)
+```
+
+```
+   
+    FALSE TRUE
+  0  1069    6
+  1   187   11
+```
+
+```r
+# Overall Accuracy of the model
+(1069+11)/(1069+6+187+11)
+```
+
+```
+[1] 0.8483896
+```
+
+```r
+#this needs to be compared with Baseline model
+# Baseline accuracy/model
+prop.table(table(framingham$TenYearCHD))
+```
+
+```
+
+        0         1 
+0.8481132 0.1518868 
+```
+
+```r
+#Our model barely beats the baseline model.Is our model worthy?
+```
+
+Modeling the Expert
+========================================================
+
+```r
+# Read in dataset
+quality = read.csv("quality.csv")
+
+# Look at structure
+str(quality)
+```
+
+```
+'data.frame':	131 obs. of  14 variables:
+ $ MemberID            : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ InpatientDays       : int  0 1 0 0 8 2 16 2 2 4 ...
+ $ ERVisits            : int  0 1 0 1 2 0 1 0 1 2 ...
+ $ OfficeVisits        : int  18 6 5 19 19 9 8 8 4 0 ...
+ $ Narcotics           : int  1 1 3 0 3 2 1 0 3 2 ...
+ $ DaysSinceLastERVisit: num  731 411 731 158 449 ...
+ $ Pain                : int  10 0 10 34 10 6 4 5 5 2 ...
+ $ TotalVisits         : int  18 8 5 20 29 11 25 10 7 6 ...
+ $ ProviderCount       : int  21 27 16 14 24 40 19 11 28 21 ...
+ $ MedicalClaims       : int  93 19 27 59 51 53 40 28 20 17 ...
+ $ ClaimLines          : int  222 115 148 242 204 156 261 87 98 66 ...
+ $ StartedOnCombination: logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ AcuteDrugGapSmall   : int  0 1 5 0 0 4 0 0 0 0 ...
+ $ PoorCare            : int  0 0 0 0 0 1 0 0 1 0 ...
+```
+
+```r
+# Table outcome for DV
+table(quality$PoorCare)
+```
+
+```
+
+ 0  1 
+98 33 
+```
+
+```r
+# Baseline accuracy (in a classification problem, the standard baseline method is to just predict the most frequent outcome for all observations)
+98/131
+```
+
+```
+[1] 0.7480916
+```
+
+```r
+#This is the baseline model which we will try to beat with our logistic model
+```
+
+Modeling the Expert - Visualization
+========================================================
+![plot of chunk unnamed-chunk-30](ml-jaxjug-figure/unnamed-chunk-30-1.png)
+Modeling the Expert - Split Samples
+========================================================
+
+```r
+# Install and load caTools package
+#install.packages("caTools")
+library(caTools)
+
+# Randomly split data
+set.seed(88)
+split = sample.split(quality$PoorCare, SplitRatio = 0.75) #the DV is split into 75% which we get from baseline accuracy above
+split # TRUE means we should put that obs in Training set and FALSE means that obs should be put in testing set
+```
+
+```
+  [1]  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE  TRUE FALSE FALSE  TRUE
+ [12] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [23]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+ [34]  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE
+ [45] FALSE  TRUE FALSE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE
+ [56]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE
+ [67]  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [78]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE
+ [89]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE
+[100]  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE FALSE
+[111] FALSE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE
+[122]  TRUE  TRUE FALSE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE
+```
+
+```r
+# Create training and testing sets
+qualityTrain = subset(quality, split == TRUE)
+qualityTest = subset(quality, split == FALSE)
+
+nrow(qualityTrain)
+```
+
+```
+[1] 99
+```
+
+```r
+nrow(qualityTest)
+```
+
+```
+[1] 32
+```
+
+Modeling the Expert - Logistic Regression
+========================================================
+
+```r
+# Logistic Regression Model
+QualityLog = glm(PoorCare ~ OfficeVisits + Narcotics, data=qualityTrain, family=binomial)
+summary(QualityLog)
+```
+
+```
+
+Call:
+glm(formula = PoorCare ~ OfficeVisits + Narcotics, family = binomial, 
+    data = qualityTrain)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-2.06303  -0.63155  -0.50503  -0.09689   2.16686  
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -2.64613    0.52357  -5.054 4.33e-07 ***
+OfficeVisits  0.08212    0.03055   2.688  0.00718 ** 
+Narcotics     0.07630    0.03205   2.381  0.01728 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 111.888  on 98  degrees of freedom
+Residual deviance:  89.127  on 96  degrees of freedom
+AIC: 95.127
+
+Number of Fisher Scoring iterations: 4
+```
+
+```r
+# Make predictions on training set
+predictTrain = predict(QualityLog, type="response") #type="response" gives us probabilities
+
+# Analyze predictions
+summary(predictTrain) # since we are dealing with probabilities, all the nos will be between 0 & 1
+```
+
+```
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.06623 0.11912 0.15967 0.25253 0.26765 0.98456 
+```
+
+```r
+#lets see if we are predicting higher probabilities for the actual poorcare cases as we expect
+tapply(predictTrain, qualityTrain$PoorCare, mean) #avg prediction for each of the TRUE outcomes
+```
+
+```
+        0         1 
+0.1894512 0.4392246 
+```
+Modeling the Expert - Thresholding
+========================================================
+
+```r
+# Confusion matrix for threshold of 0.5
+table(qualityTrain$PoorCare, predictTrain > 0.5) #first arg is for the rows(true coutcomes) and second arg is for the col labelling(predicted outcomes)
+```
+
+```
+   
+    FALSE TRUE
+  0    70    4
+  1    15   10
+```
+
+```r
+#Sensitivity=TP/total no of positive cases
+#specificity=TN/total no of negative cases
+c(10/25, 70/74)
+```
+
+```
+[1] 0.4000000 0.9459459
+```
+
+```r
+table(qualityTrain$PoorCare, predictTrain > 0.7) # Confusion matrix @ threshold of 0.7
+```
+
+```
+   
+    FALSE TRUE
+  0    73    1
+  1    17    8
+```
+
+```r
+c(8/25, 73/74)
+```
+
+```
+[1] 0.3200000 0.9864865
+```
+
+```r
+table(qualityTrain$PoorCare, predictTrain > 0.2) # Confusion matrix @ threshold of 0.2
+```
+
+```
+   
+    FALSE TRUE
+  0    54   20
+  1     9   16
+```
+
+```r
+# Sensitivity and specificity
+c(16/2, 54/74)
+```
+
+```
+[1] 8.0000000 0.7297297
+```
+
+```r
+#from the above we can see that higher threshold value will have LOWER sensitivity & a HIGHER specificity and lower threshold value will have HIGHER  sensitivity & a LOWER specificity 
+#So the big question is how to select the threshold value.
+```
+Modeling the Expert - ROC
+========================================================
+
+```r
+# Install and load ROCR package
+#install.packages("ROCR")
+library(ROCR)
+
+# Prediction function
+ROCRpred = prediction(predictTrain, qualityTrain$PoorCare)
+
+# Performance function
+ROCRperf = performance(ROCRpred, "tpr", "fpr") #This defines what we want to plot on x & y axis
+
+# Plot Reciever Operator Characteristic curve
+plot(ROCRperf, colorize=TRUE, print.cutoffs.at=seq(0,1,by=0.1), text.adj=c(-0.2,1.7))
+```
+
+![plot of chunk unnamed-chunk-34](ml-jaxjug-figure/unnamed-chunk-34-1.png)
+Modeling the Expert - Conclusion
+========================================================
+**Given this ROC curve, which threshold would you pick if you wanted to correctly identify a small group of patients who are receiving the worst care with high confidence?**
+
+*0.7*
+
+EXPLANATION:The threshold 0.7, since at this threshold we make very few false positive mistakes, and identify about 35% of the true positives.
+
+The threshold t = 0.8 is not a good choice, since it makes about the same number of false positives, but only identifies 10% of the true positives.
+
+The thresholds 0.2 and 0.3 both identify more of the true positives, but they make more false positive mistakes, so our confidence decreases.
+
+**Which threshold would you pick if you wanted to correctly identify half of the patients receiving poor care, while making as few errors as possible?**
+
+*0.3*
+
+EXPLANATION:The threshold 0.3 is the best choice in this scenerio. The threshold 0.2 also identifies over half of the patients receiving poor care, but it makes many more false positive mistakes. The thresholds 0.7 and 0.8 don't identify at least half of the patients receiving poor care.
+
+
+Classification and Regression Trees (CART)
+========================================================
+
+This plot shows sample data for two independent variables, _x_ and _y_, and each data point is colored by the outcome variable, red or gray.
+
+CART tries to split this data into subsets so that each subset is as pure or homogeneous as possible.
+
+
+A _CART_ model is represented by a __tree__.
+
+![example](CART_example_tree.png)
+
+The first three splits that CART would create are shown here.
+
+Then the standard prediction made by a _CART_ model is just a __majority vote__ within each subset.
+
+Some advantages of _CART_ are that:
+
+* it __does not assume a linear model__, like logistic regression or linear regression, and 
+* it is a __very interpretable__ model.
+
+
+Predicting Supreme Court Decisions
+========================================================
+
+```r
+stevens = read.csv("stevens.csv", stringsAsFactor = TRUE)
+str(stevens)
+```
+
+```
+'data.frame':	566 obs. of  9 variables:
+ $ Docket    : Factor w/ 566 levels "00-1011","00-1045",..: 63 69 70 145 97 181 242 289 334 436 ...
+ $ Term      : int  1994 1994 1994 1994 1995 1995 1996 1997 1997 1999 ...
+ $ Circuit   : Factor w/ 13 levels "10th","11th",..: 4 11 7 3 9 11 13 11 12 2 ...
+ $ Issue     : Factor w/ 11 levels "Attorneys","CivilRights",..: 5 5 5 5 9 5 5 5 5 3 ...
+ $ Petitioner: Factor w/ 12 levels "AMERICAN.INDIAN",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ Respondent: Factor w/ 12 levels "AMERICAN.INDIAN",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ LowerCourt: Factor w/ 2 levels "conser","liberal": 2 2 2 1 1 1 1 1 1 1 ...
+ $ Unconst   : int  0 0 0 0 0 1 0 1 0 0 ...
+ $ Reverse   : int  1 1 1 1 1 0 1 1 1 1 ...
+```
+
+Predicting Supreme Court Decisions - Data Set
+========================================================
+| Variable | Description |
+|----------|------------------------------------------------------------|
+| Docket | A unique identifier for each case. |
+| Term | The year of the case.|
+| Circuit | The circuit court of origin of the case. One of 1st - ??? 11th, Federal, or D.C.|
+| Issue | The issue area of the case. Examples are criminal procedure, civil rights, privacy, etc.|
+| Petitioner | The type of petitioner in the case. Examples are an employer, an employee, the United States, etc.|
+| Respondent | The type of respondent in the case. Examples are an employer, an employee, the United States, etc.|
+| LowerCourt | The ideological direction of the lower court ruling, either liberal or conservative.|
+| Unconst | Whether or not the petitioner argued that a law or practice is unconstitutional.|
+| Reverse | Whether or not Justice Stevens voted to reverse the case.|
+
+Predicting Supreme Court Decisions - Summary
+========================================================
+
+```r
+summary(stevens)
+```
+
+```
+     Docket         Term         Circuit                  Issue    
+ 00-1011:  1   Min.   :1994   9th    :122   CriminalProcedure:132  
+ 00-1045:  1   1st Qu.:1995   5th    : 53   JudicialPower    :102  
+ 00-1072:  1   Median :1997   11th   : 49   EconomicActivity : 98  
+ 00-1073:  1   Mean   :1997   7th    : 47   CivilRights      : 74  
+ 00-1089:  1   3rd Qu.:1999   4th    : 46   DueProcess       : 43  
+ 00-121 :  1   Max.   :2001   8th    : 44   FirstAmendment   : 39  
+ (Other):560                  (Other):205   (Other)          : 78  
+               Petitioner               Respondent    LowerCourt 
+ OTHER              :175   OTHER             :177   conser :293  
+ CRIMINAL.DEFENDENT : 89   BUSINESS          : 80   liberal:273  
+ BUSINESS           : 79   US                : 69                
+ STATE              : 48   CRIMINAL.DEFENDENT: 58                
+ US                 : 48   STATE             : 56                
+ GOVERNMENT.OFFICIAL: 38   EMPLOYEE          : 28                
+ (Other)            : 89   (Other)           : 98                
+    Unconst          Reverse      
+ Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :1.0000  
+ Mean   :0.2473   Mean   :0.5459  
+ 3rd Qu.:0.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000  
+                                  
+```
+Predicting Supreme Court Decisions - Sample Split
+========================================================
+
+```r
+library(caTools)
+set.seed(100) # to get the same split everytime
+spl1 = sample.split(stevens$Reverse, SplitRatio = 0.7)
+StevensTrain = subset(stevens, spl1==TRUE)
+StevensTest = subset(stevens, spl1==FALSE)
+
+
+#install.packages("rpart")
+library(rpart)
+#install.packages("rpart.plot")
+library(rpart.plot)
+#install.packages("randomForest")
+library(randomForest)
+```
+
+Predicting Supreme Court Decisions - CART
+========================================================
+
+```r
+StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data =StevensTrain, minbucket=25)
+
+prp(StevensTree)
+```
+
+![plot of chunk unnamed-chunk-38](ml-jaxjug-figure/unnamed-chunk-38-1.png)
+
+Predicting Supreme Court Decisions - bucket size selection
+========================================================
+
+```r
+set.seed(100)
+spl = sample.split(StevensTrain$Reverse, SplitRatio = 0.5)
+StevensValidateTrain = subset(StevensTrain, spl == TRUE)
+StevensValidateTest = subset(StevensTrain, spl == FALSE)
+
+StevensTree1 = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data = StevensValidateTrain, minbucket=5)
+StevensTree2 = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data = StevensValidateTrain, minbucket=15)
+StevensTree3 = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data = StevensValidateTrain, minbucket=25)
+
+StevensPredict1 = predict(StevensTree1, newdata = StevensValidateTest, type="class")
+StevensPredict2 = predict(StevensTree2, newdata = StevensValidateTest, type="class")
+StevensPredict3 = predict(StevensTree3, newdata = StevensValidateTest, type="class")
+```
+
+Predicting Supreme Court Decisions - Compare trees
+========================================================
+
+```r
+table(StevensValidateTest$Reverse, StevensPredict1) # 5
+```
+
+```
+   StevensPredict1
+     0  1
+  0 52 38
+  1 47 61
+```
+
+```r
+table(StevensValidateTest$Reverse, StevensPredict2) # 15
+```
+
+```
+   StevensPredict2
+     0  1
+  0 38 52
+  1 28 80
+```
+
+```r
+table(StevensValidateTest$Reverse, StevensPredict3) # 25
+```
+
+```
+   StevensPredict3
+     0  1
+  0 64 26
+  1 45 63
+```
+The best selection for min bucket is 25.
+
+Predicting Supreme Court Decisions - Final result
+========================================================
+
+```r
+StevensTreeFinal = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data =StevensTrain, minbucket=25)
+StevensPredictTest = predict(StevensTreeFinal, newdata = StevensTest, type="class")
+
+cmat = table(StevensTest$Reverse, StevensPredictTest)
+cmat
+```
+
+```
+   StevensPredictTest
+     0  1
+  0 36 41
+  1 17 76
+```
+
+```r
+c(cmat[1,1] + cmat[2,2], sum(cmat), (cmat[1,1] + cmat[2,2])/sum(cmat))
+```
+
+```
+[1] 112.0000000 170.0000000   0.6588235
+```
+
+```r
+# StevensPredictTest
+```
+We end up correctly predicting 112 out of the 170 cases in our test set, for
+an accuracy of 65:9%.
 
 Clustring
 ========================================================

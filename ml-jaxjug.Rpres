@@ -4,43 +4,55 @@ author: Padhu Ramalingam @pramalin
 date: September 6th 2017
 autosize: true
 
+<style>
+.reveal .slides section .slideContent {
+   font-size: 20px;
+}
+</style>
+
 Agenda
 ========================================================
-Motivation
-ML Algorithms
+* Motivation
+* Basic Stats
+* Machine Learning (small Data)
+  + Tools
+      - RStudio
+      - Jupyter Notebook
+      - Zeppelin
+      - KNIME
+      - Spreadsheet
+  
+* ML in Big Data
+   - ML in Spark
+   
+* Deep Learning
+    - Neural Networks
+    - Deep Learning for Java (DL4J)
 
 
 
 Motivation - 1
 ========================================================
 
-CCA Spark and Hadoop Developer Exam (CCA175) Price: USD $295
+CCA Spark and Hadoop Developer Exam (CCA175)
 
 ### Data Ingest
-The skills to transfer data between external systems and your cluster. This includes the following:
-  + Import data from a MySQL database into HDFS using Sqoop
-  + Export data to a MySQL database from HDFS using Sqoop
-  + Change the delimiter and file format of data during import using Sqoop
-  + Ingest real-time and near-real-time streaming data into HDFS
-  + Process streaming data as it is loaded onto the cluster
-  + Load data into and out of HDFS using the Hadoop File System commands
+Transfer data between external systems and cluster.
+  + Import data from database into HDFS using Sqoop
+  + Export data to database from HDFS using Sqoop
+  + Load data into and out of HDFS
 
 ### Transform, Stage, and Store
-Convert a set of data values in a given format stored in HDFS into new data values or a new data format and write them into HDFS.
-  + Load RDD data from HDFS for use in Spark applications
-  + Write the results from an RDD back into HDFS using Spark
+Convert data values stored in HDFS into a new data format.
+  + Write results from an RDD back into HDFS using Spark
   + Read and write files in a variety of file formats
-  + Perform standard extract, transform, load (ETL) processes on data
+  + Perform standard ETL processes on data
 
 ### Data Analysis
-Use Spark SQL to interact with the metastore programmatically in your applications. Generate reports by using queries against loaded data.
-  + Use metastore tables as an input source or an output sink for Spark applications
+Use Spark SQL.
   + Understand the fundamentals of querying datasets in Spark
   + Filter data using Spark
-  + Write queries that calculate aggregate statistics
   + Join disparate datasets using Spark
-  + Produce ranked or sorted data
-
 
 
 Motivation - 2
@@ -52,24 +64,25 @@ Big Data Analysis with Scala and Spark
 * Week 3. 
 * Week 4. Summarize [American Time Usage Survey] (https://www.kaggle.com/bls/american-time-use-survey) (Dataframe / SQL)
 
-Machine Learning APIs _not_ covered. 
+Machine Learning APIs are _not_ covered. 
 
 Machine Learning Algorithms
 ========================================================
-Supervised Learning
-  * Regression
-    + Linear Regression
-    + Logistic Regression
+**Supervised Learning**
+  + Regression
+    - *Linear Regression*
+    - *Logistic Regression*
   
-  * Classification
-    + Classification and Regression Trees
-    + Naive Bayes
-    + Support Vector Machine
+  + Classification
+    - *Classification and Regression Trees*
+    - *Naive Bayes*
+    - *Support Vector Machine*
   
-Unsupervised Learning
-  * Clustering
-    + Hierarchical Clustering
-    + K-Means Clustering
+**Unsupervised Learning**
+  + Clustering
+    - *Hierarchical Clustering*
+    - *K-Means Clustering*
+
 
 
 ML Algorithms & Applications
@@ -106,7 +119,7 @@ sqrt(2)
 abs(-65)
 ```
 
-Variables
+Variables (Scalar)
 ========================================================
 ``` {r}
 SquareRoot2 = sqrt(2)
@@ -131,16 +144,16 @@ Sequence
 Data Frames
 ========================================================
 ```{r}
-CountryData = data.frame(Country, LifeExpectancy)
+CountryData = data.frame(Country, LifeExpectancy) # constructed with vectors
 CountryData
-CountryData$Population = c(199000,1390000,1240000,7997,318000)
+CountryData$Population = c(199000,1390000,1240000,7997,318000) # insert new column
 CountryData
 Country = c("Australia","Greece")
 LifeExpectancy = c(82,81)
 Population = c(23050,11125)
-NewCountryData = data.frame(Country, LifeExpectancy, Population)
-NewCountryData
-AllCountryData = rbind(CountryData, NewCountryData)
+NewCountryData = data.frame(Country, LifeExpectancy, Population) # construct another DF
+#NewCountryData
+AllCountryData = rbind(CountryData, NewCountryData) # append
 AllCountryData
 ```
 
@@ -154,32 +167,216 @@ WHO = read.csv("WHO.csv")
 str(WHO)
 ```
 
-Summary(Data Frame)
+Stats Summary
 ========================================================
+
+
 ```{r}
 summary(WHO)
 ```
+## $$sd = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
 
 Basic data analysis
 ========================================================
-sd = $\sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$
-  
-
 ```{r}
-mean(WHO$Under15)
-sd(WHO$Under15)
-summary(WHO$Under15)
+#Q:What is the mean value of the "Over60" variable?
+mean(WHO$Over60)
 
-which.min(WHO$Under15)
-WHO$Country[86]
+#Q:Which country has the smallest percentage of the population over 60?
+which.min(WHO$Over60)
+WHO$Country[183]
 
-which.max(WHO$Under15)
-WHO$Country[124]
+#Q:Which country has the largest literacy rate?
+WHO$Country[which.max(WHO$LiteracyRate)]
+```
+Vizualization - Histograms
+========================================================
+```{r fig.width=10, fig.height=10,out.extra='style="float:center"'}
+
+hist(WHO$CellularSubscribers)
+```
+
+Vizualization -  Box plot
+========================================================
+```{r  fig.width=10, fig.height=10,out.extra='style="float:left"'}
+boxplot(WHO$LifeExpectancy ~ WHO$Region, xlab = "", ylab = "Life Expectancy", main = "Life Expectancy of Countries by Region")
+
+```
+Vizualization -  Summary Tables
+========================================================
+```{r}
+table(WHO$Region)
+tapply(WHO$LifeExpectancy, WHO$Region, mean)
+#tapply(WHO$LiteracyRate, WHO$Region, min, na.rm=TRUE)
 ```
 
 Linear Regression
 ========================================================
+# $$\hat{y} = a_0 + a_1 * x_1 + a_2 * x_2 + ...$$
+```{r}
+# best fit line - y = 3x + 2 
+x<-c(0,1,1)
+y<-c(2,2,8)
 
+plot(x,y,xlim = c(-3,3),ylim = c(0,10),pch=19)
+
+#Baseline prediction
+abline(h=mean(y),col="red",lwd=2)
+text(-2,5,labels="Y=4,Baseline Prediction",cex=2)
+
+#first fit the Linear model
+fit1<-lm(y~x)
+abline(lm(y~x),lwd=2,col="blue")
+text(1.5,9,labels="Regression Line",cex = 2)
+
+
+```
+Linear Regression - Correlation
+========================================================
+
+**What is the baseline prediction?**
+ 
+ *4*
+
+**What is the Sum of Squared Errors (SSE) ?**
+
+  *SSE = 0^2 + 3^2 + 3^2 = 18*
+
+**What is the Total Sum of Squares (SST) ?**
+ 
+  *SST = (2 - 4)^2 + (2 - 4)^2 + (8 - 4)^2 = 24*
+
+**What is the R^2 of the model?**
+ 
+  *R^2 = 1 - SSE/SST*
+  
+  *R^2 = 1 - 18/24 = 0.25.*
+
+Wine Quality
+========================================================
+ [Video] https://www.youtube.com/watch?v=vI3envXmyDs
+```{r}
+
+wine = read.csv("Wine.csv")
+str(wine)
+```
+```{r,echo=FALSE}
+#plot(Wine)
+# quick review
+plot(wine$Price ~ wine$AGST)
+m1 <- lm(Price ~ AGST, data = wine)
+abline(m1)
+
+```{r,echo=FALSE,out.extra='style="float:left"'}
+plot(wine$Price ~ wine$HarvestRain)
+m2 <- lm(Price ~ HarvestRain, data = wine)
+abline(m2)
+
+```{r,echo=FALSE,out.extra='style="float:left"'}
+plot(wine$Price ~ wine$WinterRain)
+m3 <- lm(Price ~ WinterRain, data = wine)
+abline(m3)
+
+```
+
+Wine Quality - Summary
+========================================================
+```{r}
+summary(wine)
+```
+
+Wine Quality - Model 1
+========================================================
+```{r}
+model1<-lm(Price ~ AGST, data=wine)
+summary(model1)
+
+```
+
+Wine Quality - Model 1 Errors
+========================================================
+```{r}
+# Sum of Squared Errors
+model1$residuals
+SSE<-sum(model1$residuals^2)
+SSE
+```
+
+Wine Quality - Model 2
+========================================================
+```{r}
+# Linear Regression (two variables)
+model2<-lm(Price ~ AGST + HarvestRain, data=wine)
+summary(model2)
+
+# Sum of Squared Errors
+SSE<-sum(model2$residuals^2)
+SSE
+```
+
+Wine Quality - Model 3
+========================================================
+```{r}
+# Linear Regression (all variables)
+model3<-lm(Price ~ AGST + HarvestRain + WinterRain + Age + FrancePop, data=wine)
+summary(model3)
+
+# Sum of Squared Errors
+SSE<-sum(model3$residuals^2)
+SSE
+```
+
+Wine Quality - Model 4
+========================================================
+```{r}
+# Remove FrancePop
+model4<-lm(Price ~ AGST + HarvestRain + WinterRain + Age, data=wine)
+summary(model4)
+
+# Sum of Squared Errors
+SSE<-sum(model4$residuals^2)
+SSE
+```
+Wine Quality - Multicollinearity
+========================================================
+```{r}
+# Correlations
+cor(wine) #correlation matrix 
+
+
+
+model5<-lm(Price ~ AGST + HarvestRain + WinterRain, data=wine) # Remove Age and FrancePop as they were highly  correlated
+summary(model5)
+#removing both Age & FrancePop results in lowering of R-squared. We should remove FrancePop as intuitively Age of Wine is a better predictor of Price of Wine
+```
+
+Wine Quality - Predictions
+========================================================
+```{r}
+# Read in test set
+wineTest<-read.csv("WineTest.csv")
+str(wineTest)
+
+# Make test set predictions using predict()
+predictTest<-predict(model4, newdata=wineTest)
+predictTest
+
+# Compute R-squared
+SSE<-sum((wineTest$Price - predictTest)^2)
+SST<-sum((wineTest$Price - mean(wine$Price))^2)
+1 - SSE/SST
+```
+
+Logistic Regression
+========================================================
+
+# $P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$
+# $=\frac{1}{1 + e^{-logit}}$
+```{r, echo=FALSE}
+logFunc <- function(x) {1 / (1+exp(-x))}
+xlab = expression("beta_0 + beta_1*x_1 + beta_2*x_2 + ... + beta_k*x_k")
+curve(logFunc, from=-4.5, to=4.5, xlab=xlab, ylab="P(y=1)")
+```
 
 
 Clustring
@@ -187,11 +384,11 @@ Clustring
    [Analytics Edge Course Material] (file:///C:/home/presentations/ml-jaxjug/Unit6_Clustering.html)
 
 
-Big Data
+Big Data (pySpark)
 ========================================================
    [PySpark code] (file:///C:/home/presentations/ml-jaxjug/classification.py)
 
-Big Data - compared to R
+pySpark - compared to R
 ========================================================
 ```{r}
 weather = read.csv("daily_weather.csv")
@@ -218,15 +415,3 @@ cmat
 (cmat[1,1] + cmat[2,2])/sum(cmat)
 ```
 
-R Code
-========================================================
-```{r}
-summary(cars)
-```
-
-Slide With Plot
-========================================================
-
-```{r, echo=FALSE}
-plot(cars)
-```

@@ -468,6 +468,24 @@ table(quality$PoorCare)
 98/131
 #This is the baseline model which we will try to beat with our logistic model
 ```
+Modeling the Expert - Data Set
+========================================================
+| Variable   | Description         |
+|------------|------------------------------------|
+| MemberID | identifying number. |
+| InpatientDays | number of inpatient visits, or number of days the person spent in the hospital. |
+| ERVisits | number of times the patient visited the emergency room. |
+| OfficeVisits | number of times the patient visited any doctor's office. |
+| Narcotics | number of prescriptions the patient had for narcotics. |
+| DaysSinceLastERVisit | number of days between the patient's last emergency room visit and the end of the study period (set to the length of the study period if they never visited the ER). |
+| Pain | number of visits for which the patient complained about pain. |
+| TotalVisits | total number of times the patient visited any healthcare provider. |
+| ProviderCount | number of providers that served the patient. |
+| MedicalClaims | number of days on which the patient had a medical claim. |
+| ClaimLines | total number of medical claims. |
+| StartedOnCombination | whether or not the patient was started on a combination of drugs to treat their diabetes (TRUE or FALSE). |
+| AcuteDrugGapSmall | fraction of acute drugs that were refilled quickly after the prescription ran out. |
+| PoorCare | outcome is equal to 1 if the patient had poor care, and equal to 0 if the patient had good care. |
 
 Modeling the Expert - Visualization
 ========================================================
@@ -622,6 +640,40 @@ Predicting Supreme Court Decisions - Summary
 ```{r}
 summary(stevens)
 ```
+Predicting Supreme Court Decisions - Logistic Regression
+========================================================
+```{r}
+#remove the variables that are not interesting, `Docket` and `Term`.
+stevensless <- stevens[, -c(1, 2)]
+library(caTools)
+set.seed(3000) # to get the same split everytime
+spl1 = sample.split(stevensless$Reverse, SplitRatio = 0.7)
+Train1 = subset(stevensless, spl1==TRUE)
+Test1 = subset(stevensless, spl1==FALSE)
+
+```
+Predicting Supreme Court Decisions - Logistic Regression Summary
+=================================================================
+```{r}
+#Fit _Logistic Regression_ model
+#As a reference we also fit a _logistic regression_ model to the _training_ data set:
+model_LogRegr <- glm(Reverse ~ ., data = Train1, family = binomial)
+summary(model_LogRegr)
+```
+
+Predicting Supreme Court Decisions - Logistic Regression Accuracy
+=================================================================
+```{r}
+
+#Out-of-Sample predictions of the _Logistic Regression_ model
+predict_LogRegr_Test<- predict(model_LogRegr,type = "response", newdata = Test1)
+cmat_LR <- table(Test1$Reverse, predict_LogRegr_Test > 0.5)
+cmat_LR 
+
+accu_LR <- (cmat_LR[1,1] + cmat_LR[2,2])/sum(cmat_LR)
+accu_LR
+```
+
 Predicting Supreme Court Decisions - Sample Split
 ========================================================
 ```{r}
@@ -690,10 +742,190 @@ c(cmat[1,1] + cmat[2,2], sum(cmat), (cmat[1,1] + cmat[2,2])/sum(cmat))
 We end up correctly predicting 112 out of the 170 cases in our test set, for
 an accuracy of 65:9%.
 
-Clustring
+
+
+Image Segmentation - Hierarchical Clustring
 ========================================================
    [Analytics Edge Course Material] (file:///C:/home/presentations/ml-jaxjug/Unit6_Clustering.html)
+```{r}
+flower = read.csv("flower.csv", header=FALSE)
+str(flower)
+```
 
+Image Segmentation - Data preperation
+========================================================
+```{r}
+flowerMatrix = as.matrix(flower)
+str(flowerMatrix)
+
+image(flowerMatrix,axes=FALSE,col=grey(seq(0,1,length=256)))
+
+# Turn matrix into a vector
+flowerVector = as.vector(flowerMatrix)
+str(flowerVector)
+```
+Image Segmentation - Distances
+========================================================
+$$distance(a,b) = \sqrt{\sum_{i=1}^N {(a_i + b_i)^2}} $$
+
+**Genres:**
+
+(unkonwn), Action, Adventure, Animation, Chilren's,
+
+Comedy, Crime, Documnetary, Drama, Fantasy,
+
+Film Noir, Horror, Musical, Mystery, Romance,
+
+Sci-Fi, Thriller, War, Western
+
+Toy Story: (0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0)
+
+Batman Forever: (0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0)
+
+$$distnace(Toy Story, Batman Forever) =  \sqrt{(0-0)^2 + (0-1)^2 + (0-1)^2 + (1-0)^2 +  ...} = 15$$
+
+Image Segmentation - dendrogram
+========================================================
+```{r}
+#Compute "euclidean" distances
+
+distance = dist(flowerVector, method = "euclidean")
+# Hierarchical clustering of the intensity values which is the dendogram tree
+clusterIntensity = hclust(distance, method="ward.D2")
+
+#Plot the dendrogram
+plot(clusterIntensity)
+
+# Select 3 clusters
+#visualising the cuts by plotting a rectangle around the clusters
+rect.hclust(clusterIntensity, k = 3, border = "red")
+```
+
+Image Segmentation - Split Clusters
+========================================================
+```{r}
+#lets split the data into these 3 clusters
+flowerClusters = cutree(clusterIntensity, k = 3)
+flowerClusters
+```
+
+Image Segmentation - Plot
+========================================================
+```{r}
+# Find mean intensity values of each of these 3 clusters
+tapply(flowerVector, flowerClusters, mean)
+
+# Plot the image and the clusters
+#Before plotting the image we want to convert the flowerClusters vector into a matrix of form n x m using dim()
+dim(flowerClusters) = c(50,50)
+#plotting the image
+image(flowerClusters, axes = FALSE)
+```
+
+MRI Image - Analysis
+========================================================
+```{r}
+# Let's try this with an MRI image of the brain
+#healthy.csv dataframe consists of matrix of intensity values 
+healthy = read.csv("healthy.csv", header=FALSE)
+
+#Creating the healthy matrix
+healthyMatrix = as.matrix(healthy)
+str(healthyMatrix)
+
+```
+MRI Image - Healthy Scan
+========================================================
+```{r}
+#we can see that the image is 566 by 646 ... considerably larger than the flower
+
+# Plot the image in gray scale
+image(healthyMatrix,axes=FALSE,col=grey(seq(0,1,length=256)))
+```
+
+MRI Image - # of cacluations
+========================================================
+```{r}
+# Hierarchial clustering  by computing the distance vector
+healthyVector = as.vector(healthyMatrix)
+#distance = dist(healthyVector, method = "euclidean")
+#throws up error that the vector size is huge 480GB+
+
+# We have an error - why?
+#lets see the size of the vector
+str(healthyVector)
+
+#Lets  store the value in n
+n=365636
+
+#therefore the pairwise distance between each of the above n data points is:
+n*(n-1)/2
+```
+
+MRI Image - Create K - Means clusters
+========================================================
+```{r}
+# Specify number of clusters (Depends upon what you want to extract from the image)
+k = 5
+
+# Run k-means
+# k means clustering randomly assigns data points to cluster. Set a seed for similar results
+ 
+set.seed(1)
+
+KMC = kmeans(healthyVector, centers = k, iter.max = 1000)
+str(KMC)
+```
+
+MRI Image - Plot segmented image
+========================================================
+```{r}
+# Extract clusters variable for plotting it
+healthyClusters = KMC$cluster
+
+# mean intensity values of each clusters is already available under the variable name centers in KMC object
+KMC$centers[2] #mean intensity value of 2nd cluster
+
+# Plot the image with the clusters
+#first convert into a matrix using dim()
+dim(healthyClusters) = c(nrow(healthyMatrix), ncol(healthyMatrix))
+image(healthyClusters, axes = FALSE, col=rainbow(k))
+```
+
+MRI Image - Choosing # of Clusters
+========================================================
+```{r}
+
+# get the sum of withinss for cluseter size 2 to 10.
+NumClusters = seq(2,10,1)
+SumWithinss = sapply(2:10, function(x) sum(kmeans(healthyVector, centers=x, iter.max=1000)$withinss))
+
+#SCREE plot
+plot(NumClusters, SumWithinss, type="b")
+```
+MRI Image - Compare with test image
+========================================================
+```{r}
+tumor = read.csv("tumor.csv", header=FALSE)
+tumorMatrix = as.matrix(tumor)
+tumorVector = as.vector(tumorMatrix)
+
+#Apply clusters from before to new image, using the flexclust package
+#install.packages("flexclust")
+library(flexclust)
+
+#converting KMC into kcca object
+KMC.kcca = as.kcca(KMC, healthyVector) #Healthy vector as a training set
+tumorClusters = predict(KMC.kcca, newdata = tumorVector) #tumorvector as a testing set
+
+#Visualize the clusters
+
+#converting tumorClusters into a matrix
+dim(tumorClusters) = c(nrow(tumorMatrix), ncol(tumorMatrix))
+
+#visualising the tumorClusters
+image(tumorClusters, axes = FALSE, col=rainbow(k))
+```
 
 Big Data (pySpark)
 ========================================================
@@ -726,3 +958,16 @@ cmat
 (cmat[1,1] + cmat[2,2])/sum(cmat)
 ```
 
+Acknowledgement
+========================================================
+
+**Analytics Edge** https://www.edx.org/course/analytics-edge-mitx-15-071x-3
+
+**Analytics Vidhya - learning plan** https://www.analyticsvidhya.com/blog/2017/01/the-most-comprehensive-data-science-learning-plan-for-2017/
+
+**KNIME** https://www.knime.com/
+
+The End
+========================================================
+
+# Thank You

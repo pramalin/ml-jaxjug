@@ -999,6 +999,24 @@ table(quality$PoorCare)
 ```r
 #This is the baseline model which we will try to beat with our logistic model
 ```
+Modeling the Expert - Data Set
+========================================================
+| Variable   | Description         |
+|------------|------------------------------------|
+| MemberID | identifying number. |
+| InpatientDays | number of inpatient visits, or number of days the person spent in the hospital. |
+| ERVisits | number of times the patient visited the emergency room. |
+| OfficeVisits | number of times the patient visited any doctor's office. |
+| Narcotics | number of prescriptions the patient had for narcotics. |
+| DaysSinceLastERVisit | number of days between the patient's last emergency room visit and the end of the study period (set to the length of the study period if they never visited the ER). |
+| Pain | number of visits for which the patient complained about pain. |
+| TotalVisits | total number of times the patient visited any healthcare provider. |
+| ProviderCount | number of providers that served the patient. |
+| MedicalClaims | number of days on which the patient had a medical claim. |
+| ClaimLines | total number of medical claims. |
+| StartedOnCombination | whether or not the patient was started on a combination of drugs to treat their diabetes (TRUE or FALSE). |
+| AcuteDrugGapSmall | fraction of acute drugs that were refilled quickly after the prescription ran out. |
+| PoorCare | outcome is equal to 1 if the patient had poor care, and equal to 0 if the patient had good care. |
 
 Modeling the Expert - Visualization
 ========================================================
@@ -1306,6 +1324,172 @@ summary(stevens)
  Max.   :1.0000   Max.   :1.0000  
                                   
 ```
+Predicting Supreme Court Decisions - Logistic Regression
+========================================================
+
+```r
+#remove the variables that are not interesting, `Docket` and `Term`.
+stevensless <- stevens[, -c(1, 2)]
+library(caTools)
+set.seed(3000) # to get the same split everytime
+spl1 = sample.split(stevensless$Reverse, SplitRatio = 0.7)
+Train1 = subset(stevensless, spl1==TRUE)
+Test1 = subset(stevensless, spl1==FALSE)
+```
+Predicting Supreme Court Decisions - Logistic Regression Summary
+=================================================================
+
+```r
+#Fit _Logistic Regression_ model
+#As a reference we also fit a _logistic regression_ model to the _training_ data set:
+model_LogRegr <- glm(Reverse ~ ., data = Train1, family = binomial)
+summary(model_LogRegr)
+```
+
+```
+
+Call:
+glm(formula = Reverse ~ ., family = binomial, data = Train1)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.3832  -0.9186   0.3458   0.8470   2.2290  
+
+Coefficients:
+                                      Estimate Std. Error z value Pr(>|z|)
+(Intercept)                            0.45008    2.34027   0.192  0.84749
+Circuit11th                            1.11621    0.65391   1.707  0.08783
+Circuit1st                             0.45867    1.16360   0.394  0.69344
+Circuit2nd                             2.31471    0.72699   3.184  0.00145
+Circuit3rd                             0.46020    0.74762   0.616  0.53819
+Circuit4th                             1.95459    0.72631   2.691  0.00712
+Circuit5th                             2.03668    0.67009   3.039  0.00237
+Circuit6th                             1.48370    0.71501   2.075  0.03798
+Circuit7th                             0.69997    0.68327   1.024  0.30563
+Circuit8th                             0.78445    0.67347   1.165  0.24411
+Circuit9th                             1.34112    0.58353   2.298  0.02154
+CircuitDC                              0.57449    0.72694   0.790  0.42936
+CircuitFED                             0.63139    0.74354   0.849  0.39579
+IssueCivilRights                       0.15302    1.41314   0.108  0.91377
+IssueCriminalProcedure                -0.08072    1.42975  -0.056  0.95498
+IssueDueProcess                        0.48455    1.44254   0.336  0.73694
+IssueEconomicActivity                  0.21192    1.39093   0.152  0.87891
+IssueFederalismAndInterstateRelations  0.28026    1.48114   0.189  0.84992
+IssueFederalTaxation                  -1.76887    1.71259  -1.033  0.30167
+IssueFirstAmendment                   -0.50309    1.45309  -0.346  0.72918
+IssueJudicialPower                    -0.11009    1.37988  -0.080  0.93641
+IssuePrivacy                           2.39866    1.79602   1.336  0.18170
+IssueUnions                           -0.78603    1.52914  -0.514  0.60723
+PetitionerBUSINESS                     1.36136    1.60051   0.851  0.39500
+PetitionerCITY                        -0.19086    1.79841  -0.106  0.91548
+PetitionerCRIMINAL.DEFENDENT           2.01263    1.61931   1.243  0.21391
+PetitionerEMPLOYEE                     2.09290    1.67320   1.251  0.21099
+PetitionerEMPLOYER                     0.68498    1.75856   0.390  0.69690
+PetitionerGOVERNMENT.OFFICIAL          0.35138    1.62596   0.216  0.82890
+PetitionerINJURED.PERSON               1.46768    1.84218   0.797  0.42562
+PetitionerOTHER                        1.40732    1.57153   0.896  0.37051
+PetitionerPOLITICIAN                   0.77215    1.71668   0.450  0.65286
+PetitionerSTATE                        0.82069    1.62757   0.504  0.61409
+PetitionerUS                           1.45574    1.62834   0.894  0.37132
+RespondentBUSINESS                    -1.73754    0.98272  -1.768  0.07705
+RespondentCITY                        -2.63295    1.33944  -1.966  0.04933
+RespondentCRIMINAL.DEFENDENT          -3.00803    1.01539  -2.962  0.00305
+RespondentEMPLOYEE                    -2.32134    1.09025  -2.129  0.03324
+RespondentEMPLOYER                    -0.92216    1.45769  -0.633  0.52699
+RespondentGOVERNMENT.OFFICIAL         -2.38169    1.21421  -1.962  0.04982
+RespondentINJURED.PERSON              -3.46752    1.20843  -2.869  0.00411
+RespondentOTHER                       -2.24797    0.94253  -2.385  0.01708
+RespondentPOLITICIAN                  -1.67445    1.12146  -1.493  0.13541
+RespondentSTATE                       -1.36931    1.09153  -1.254  0.20966
+RespondentUS                          -3.02756    1.04803  -2.889  0.00387
+LowerCourtliberal                     -0.95835    0.30572  -3.135  0.00172
+Unconst                               -0.18029    0.35504  -0.508  0.61159
+                                        
+(Intercept)                             
+Circuit11th                           . 
+Circuit1st                              
+Circuit2nd                            **
+Circuit3rd                              
+Circuit4th                            **
+Circuit5th                            **
+Circuit6th                            * 
+Circuit7th                              
+Circuit8th                              
+Circuit9th                            * 
+CircuitDC                               
+CircuitFED                              
+IssueCivilRights                        
+IssueCriminalProcedure                  
+IssueDueProcess                         
+IssueEconomicActivity                   
+IssueFederalismAndInterstateRelations   
+IssueFederalTaxation                    
+IssueFirstAmendment                     
+IssueJudicialPower                      
+IssuePrivacy                            
+IssueUnions                             
+PetitionerBUSINESS                      
+PetitionerCITY                          
+PetitionerCRIMINAL.DEFENDENT            
+PetitionerEMPLOYEE                      
+PetitionerEMPLOYER                      
+PetitionerGOVERNMENT.OFFICIAL           
+PetitionerINJURED.PERSON                
+PetitionerOTHER                         
+PetitionerPOLITICIAN                    
+PetitionerSTATE                         
+PetitionerUS                            
+RespondentBUSINESS                    . 
+RespondentCITY                        * 
+RespondentCRIMINAL.DEFENDENT          **
+RespondentEMPLOYEE                    * 
+RespondentEMPLOYER                      
+RespondentGOVERNMENT.OFFICIAL         * 
+RespondentINJURED.PERSON              **
+RespondentOTHER                       * 
+RespondentPOLITICIAN                    
+RespondentSTATE                         
+RespondentUS                          **
+LowerCourtliberal                     **
+Unconst                                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 545.70  on 395  degrees of freedom
+Residual deviance: 428.71  on 349  degrees of freedom
+AIC: 522.71
+
+Number of Fisher Scoring iterations: 5
+```
+
+Predicting Supreme Court Decisions - Logistic Regression Accuracy
+=================================================================
+
+```r
+#Out-of-Sample predictions of the _Logistic Regression_ model
+predict_LogRegr_Test<- predict(model_LogRegr,type = "response", newdata = Test1)
+cmat_LR <- table(Test1$Reverse, predict_LogRegr_Test > 0.5)
+cmat_LR 
+```
+
+```
+   
+    FALSE TRUE
+  0    47   30
+  1    27   66
+```
+
+```r
+accu_LR <- (cmat_LR[1,1] + cmat_LR[2,2])/sum(cmat_LR)
+accu_LR
+```
+
+```
+[1] 0.6647059
+```
+
 Predicting Supreme Court Decisions - Sample Split
 ========================================================
 
@@ -1334,7 +1518,7 @@ StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerC
 prp(StevensTree)
 ```
 
-![plot of chunk unnamed-chunk-38](ml-jaxjug-figure/unnamed-chunk-38-1.png)
+![plot of chunk unnamed-chunk-41](ml-jaxjug-figure/unnamed-chunk-41-1.png)
 
 Predicting Supreme Court Decisions - bucket size selection
 ========================================================
@@ -1423,10 +1607,407 @@ c(cmat[1,1] + cmat[2,2], sum(cmat), (cmat[1,1] + cmat[2,2])/sum(cmat))
 We end up correctly predicting 112 out of the 170 cases in our test set, for
 an accuracy of 65:9%.
 
-Clustring
+
+
+Image Segmentation - Hierarchical Clustring
 ========================================================
    [Analytics Edge Course Material] (file:///C:/home/presentations/ml-jaxjug/Unit6_Clustering.html)
 
+```r
+flower = read.csv("flower.csv", header=FALSE)
+str(flower)
+```
+
+```
+'data.frame':	50 obs. of  50 variables:
+ $ V1 : num  0.0991 0.0991 0.1034 0.1034 0.1034 ...
+ $ V2 : num  0.112 0.108 0.112 0.116 0.108 ...
+ $ V3 : num  0.134 0.116 0.121 0.116 0.112 ...
+ $ V4 : num  0.138 0.138 0.121 0.121 0.112 ...
+ $ V5 : num  0.138 0.134 0.125 0.116 0.112 ...
+ $ V6 : num  0.138 0.129 0.121 0.108 0.112 ...
+ $ V7 : num  0.129 0.116 0.103 0.108 0.112 ...
+ $ V8 : num  0.116 0.103 0.103 0.103 0.116 ...
+ $ V9 : num  0.1121 0.0991 0.1078 0.1121 0.1164 ...
+ $ V10: num  0.121 0.108 0.112 0.116 0.125 ...
+ $ V11: num  0.134 0.125 0.129 0.134 0.129 ...
+ $ V12: num  0.147 0.134 0.138 0.129 0.138 ...
+ $ V13: num  0.000862 0.146552 0.142241 0.142241 0.133621 ...
+ $ V14: num  0.000862 0.000862 0.142241 0.133621 0.12931 ...
+ $ V15: num  0.142 0.142 0.134 0.121 0.116 ...
+ $ V16: num  0.125 0.125 0.116 0.108 0.108 ...
+ $ V17: num  0.1121 0.1164 0.1078 0.0991 0.0991 ...
+ $ V18: num  0.108 0.112 0.108 0.108 0.108 ...
+ $ V19: num  0.121 0.129 0.125 0.116 0.116 ...
+ $ V20: num  0.138 0.129 0.125 0.116 0.116 ...
+ $ V21: num  0.138 0.134 0.121 0.125 0.125 ...
+ $ V22: num  0.134 0.129 0.125 0.121 0.103 ...
+ $ V23: num  0.125 0.1207 0.1164 0.1164 0.0819 ...
+ $ V24: num  0.1034 0.1034 0.0991 0.0991 0.1034 ...
+ $ V25: num  0.0948 0.0905 0.0905 0.1034 0.125 ...
+ $ V26: num  0.0862 0.0862 0.0991 0.125 0.1422 ...
+ $ V27: num  0.086207 0.086207 0.103448 0.12931 0.000862 ...
+ $ V28: num  0.0991 0.1078 0.1164 0.1293 0.1466 ...
+ $ V29: num  0.116 0.134 0.134 0.121 0.142 ...
+ $ V30: num  0.121 0.138 0.142 0.129 0.138 ...
+ $ V31: num  0.121 0.134 0.142 0.134 0.129 ...
+ $ V32: num  0.116 0.134 0.129 0.116 0.112 ...
+ $ V33: num  0.108 0.112 0.116 0.108 0.108 ...
+ $ V34: num  0.1078 0.1078 0.1034 0.0991 0.1034 ...
+ $ V35: num  0.1078 0.1034 0.0991 0.0991 0.0991 ...
+ $ V36: num  0.1078 0.1034 0.1034 0.0905 0.0862 ...
+ $ V37: num  0.1078 0.1078 0.1034 0.0819 0.0733 ...
+ $ V38: num  0.0948 0.0991 0.0776 0.069 0.0733 ...
+ $ V39: num  0.0733 0.056 0.0474 0.0474 0.056 ...
+ $ V40: num  0.0474 0.0388 0.0431 0.0474 0.0603 ...
+ $ V41: num  0.0345 0.0345 0.0388 0.0474 0.0647 ...
+ $ V42: num  0.0259 0.0259 0.0345 0.0431 0.056 ...
+ $ V43: num  0.0259 0.0259 0.0388 0.0517 0.0603 ...
+ $ V44: num  0.0302 0.0302 0.0345 0.0517 0.0603 ...
+ $ V45: num  0.0259 0.0259 0.0259 0.0388 0.0474 ...
+ $ V46: num  0.0259 0.0172 0.0172 0.0259 0.0345 ...
+ $ V47: num  0.01724 0.01724 0.00862 0.02155 0.02586 ...
+ $ V48: num  0.0216 0.0129 0.0129 0.0172 0.0302 ...
+ $ V49: num  0.0216 0.0216 0.0216 0.0345 0.0603 ...
+ $ V50: num  0.0302 0.0345 0.0388 0.0603 0.0776 ...
+```
+
+Image Segmentation - Data preperation
+========================================================
+
+```r
+flowerMatrix = as.matrix(flower)
+str(flowerMatrix)
+```
+
+```
+ num [1:50, 1:50] 0.0991 0.0991 0.1034 0.1034 0.1034 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : NULL
+  ..$ : chr [1:50] "V1" "V2" "V3" "V4" ...
+```
+
+```r
+image(flowerMatrix,axes=FALSE,col=grey(seq(0,1,length=256)))
+```
+
+![plot of chunk unnamed-chunk-46](ml-jaxjug-figure/unnamed-chunk-46-1.png)
+
+```r
+# Turn matrix into a vector
+flowerVector = as.vector(flowerMatrix)
+str(flowerVector)
+```
+
+```
+ num [1:2500] 0.0991 0.0991 0.1034 0.1034 0.1034 ...
+```
+Image Segmentation - Distances
+========================================================
+$$distance(a,b) = \sqrt{\sum_{i=1}^N {(a_i + b_i)^2}} $$
+
+**Genres:**
+
+(unkonwn), Action, Adventure, Animation, Chilren's,
+
+Comedy, Crime, Documnetary, Drama, Fantasy,
+
+Film Noir, Horror, Musical, Mystery, Romance,
+
+Sci-Fi, Thriller, War, Western
+
+Toy Story: (0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0)
+
+Batman Forever: (0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0)
+
+$$distnace(Toy Story, Batman Forever) =  \sqrt{(0-0)^2 + (0-1)^2 + (0-1)^2 + (1-0)^2 +  ...} = 15$$
+
+Image Segmentation - dendrogram
+========================================================
+
+```r
+#Compute "euclidean" distances
+
+distance = dist(flowerVector, method = "euclidean")
+# Hierarchical clustering of the intensity values which is the dendogram tree
+clusterIntensity = hclust(distance, method="ward.D2")
+
+#Plot the dendrogram
+plot(clusterIntensity)
+
+# Select 3 clusters
+#visualising the cuts by plotting a rectangle around the clusters
+rect.hclust(clusterIntensity, k = 3, border = "red")
+```
+
+![plot of chunk unnamed-chunk-47](ml-jaxjug-figure/unnamed-chunk-47-1.png)
+
+Image Segmentation - Split Clusters
+========================================================
+
+```r
+#lets split the data into these 3 clusters
+flowerClusters = cutree(clusterIntensity, k = 3)
+flowerClusters
+```
+
+```
+   [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+  [35] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+  [69] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [103] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [137] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [171] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [205] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [239] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [273] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [307] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [341] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3
+ [375] 2 2 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [409] 1 1 1 1 1 1 1 1 1 2 2 1 1 1 3 3 3 3 3 2 1 2 3 2 1 1 1 1 1 1 1 1 1 1
+ [443] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 3 3 3 3
+ [477] 3 2 2 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [511] 1 1 1 1 1 1 2 3 3 2 1 1 3 3 3 3 3 2 3 3 3 1 2 3 3 1 1 1 1 1 1 1 1 1
+ [545] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 1 2 3 3 3 1 1 3 3 3 3 3 2
+ [579] 3 3 2 2 3 3 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ [613] 2 3 3 2 1 3 3 3 2 1 2 3 3 3 3 3 3 3 2 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1
+ [647] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 2 2 3 3 3 1 2 3 3 3 3 3 3 3
+ [681] 3 3 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+ [715] 3 3 3 3 3 3 3 2 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1
+ [749] 1 1 1 1 1 1 1 1 1 1 1 2 3 2 1 1 2 3 3 3 3 3 3 3 2 3 3 3 3 3 3 3 3 3
+ [783] 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 2 1 1
+ [817] 3 3 3 3 3 3 2 2 3 3 3 3 3 3 3 3 3 3 3 2 1 1 2 2 3 3 1 1 1 1 1 1 1 1
+ [851] 1 1 1 1 1 1 1 1 1 1 2 3 3 3 2 1 2 3 3 3 3 3 3 2 3 3 3 3 3 3 3 3 3 3
+ [885] 2 1 2 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 2 2
+ [919] 3 3 3 3 3 2 2 3 3 3 3 3 3 3 3 2 1 3 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1
+ [953] 1 1 1 1 1 1 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 3 3 3 3 2 2 3 3
+ [987] 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3
+[1021] 3 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[1055] 1 1 2 2 2 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 2 2
+[1089] 2 2 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2
+[1123] 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1
+[1157] 2 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 2
+[1191] 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 3 3 3 3 3 2 2 2 2 2 2
+[1225] 2 2 2 2 2 2 2 3 3 3 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[1259] 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1
+[1293] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2
+[1327] 2 2 2 2 3 3 3 3 3 3 3 3 3 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3
+[1361] 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+[1395] 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2
+[1429] 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3
+[1463] 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 2 1 1 1 1 1
+[1497] 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 2 3 3 3 3 3 3 3 2 2 3 3 3 2 3
+[1531] 3 3 3 3 3 2 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 2 2 1
+[1565] 2 3 3 3 3 3 3 3 3 2 2 3 3 3 3 2 3 3 3 3 3 2 1 2 2 2 2 2 1 1 1 1 1 1
+[1599] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3 2 3 3 3 3 3 2 3 3
+[1633] 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3
+[1667] 2 3 3 3 3 3 2 2 3 3 3 3 3 2 1 3 3 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1
+[1701] 1 1 1 1 1 1 1 1 1 1 1 2 3 3 2 2 3 3 3 3 3 3 1 3 3 3 3 3 3 2 1 2 3 3
+[1735] 3 3 3 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 2 1 3 3 3
+[1769] 3 3 3 1 1 3 3 3 3 3 3 2 1 1 2 3 3 3 3 2 3 2 1 1 1 1 1 1 1 1 1 1 1 1
+[1803] 1 1 1 1 1 1 1 1 1 2 2 1 2 3 3 3 3 3 2 1 2 3 3 2 3 3 3 2 1 1 1 1 3 3
+[1837] 3 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3
+[1871] 1 1 2 3 3 2 3 3 3 3 1 1 1 1 1 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[1905] 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 1 1 2 3 3 1 3 3 3 3 1 1 1 1 1 1 1 1
+[1939] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 3 3 2 1 1
+[1973] 2 3 3 1 2 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2007] 1 1 1 1 1 1 1 1 1 1 1 2 3 1 1 1 1 3 3 1 1 3 3 3 1 1 1 1 1 1 1 1 1 1
+[2041] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+[2075] 3 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2109] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2143] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2177] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2211] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2245] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2279] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2313] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2347] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2381] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2415] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2449] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+[2483] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+```
+
+Image Segmentation - Plot
+========================================================
+
+```r
+# Find mean intensity values of each of these 3 clusters
+tapply(flowerVector, flowerClusters, mean)
+```
+
+```
+         1          2          3 
+0.08574315 0.50826255 0.93147713 
+```
+
+```r
+# Plot the image and the clusters
+#Before plotting the image we want to convert the flowerClusters vector into a matrix of form n x m using dim()
+dim(flowerClusters) = c(50,50)
+#plotting the image
+image(flowerClusters, axes = FALSE)
+```
+
+![plot of chunk unnamed-chunk-49](ml-jaxjug-figure/unnamed-chunk-49-1.png)
+
+MRI Image - Analysis
+========================================================
+
+```r
+# Let's try this with an MRI image of the brain
+#healthy.csv dataframe consists of matrix of intensity values 
+healthy = read.csv("healthy.csv", header=FALSE)
+
+#Creating the healthy matrix
+healthyMatrix = as.matrix(healthy)
+str(healthyMatrix)
+```
+
+```
+ num [1:566, 1:646] 0.00427 0.00855 0.01282 0.01282 0.01282 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : NULL
+  ..$ : chr [1:646] "V1" "V2" "V3" "V4" ...
+```
+MRI Image - Healthy Scan
+========================================================
+
+```r
+#we can see that the image is 566 by 646 ... considerably larger than the flower
+
+# Plot the image in gray scale
+image(healthyMatrix,axes=FALSE,col=grey(seq(0,1,length=256)))
+```
+
+![plot of chunk unnamed-chunk-51](ml-jaxjug-figure/unnamed-chunk-51-1.png)
+
+MRI Image - # of cacluations
+========================================================
+
+```r
+# Hierarchial clustering  by computing the distance vector
+healthyVector = as.vector(healthyMatrix)
+#distance = dist(healthyVector, method = "euclidean")
+#throws up error that the vector size is huge 480GB+
+
+# We have an error - why?
+#lets see the size of the vector
+str(healthyVector)
+```
+
+```
+ num [1:365636] 0.00427 0.00855 0.01282 0.01282 0.01282 ...
+```
+
+```r
+#Lets  store the value in n
+n=365636
+
+#therefore the pairwise distance between each of the above n data points is:
+n*(n-1)/2
+```
+
+```
+[1] 66844659430
+```
+
+MRI Image - Create K - Means clusters
+========================================================
+
+```r
+# Specify number of clusters (Depends upon what you want to extract from the image)
+k = 5
+
+# Run k-means
+# k means clustering randomly assigns data points to cluster. Set a seed for similar results
+ 
+set.seed(1)
+
+KMC = kmeans(healthyVector, centers = k, iter.max = 1000)
+str(KMC)
+```
+
+```
+List of 9
+ $ cluster     : int [1:365636] 3 3 3 3 3 3 3 3 3 3 ...
+ $ centers     : num [1:5, 1] 0.4818 0.1062 0.0196 0.3094 0.1842
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : chr [1:5] "1" "2" "3" "4" ...
+  .. ..$ : NULL
+ $ totss       : num 5775
+ $ withinss    : num [1:5] 96.6 47.2 39.2 57.5 62.3
+ $ tot.withinss: num 303
+ $ betweenss   : num 5472
+ $ size        : int [1:5] 20556 101085 133162 31555 79278
+ $ iter        : int 2
+ $ ifault      : int 0
+ - attr(*, "class")= chr "kmeans"
+```
+
+MRI Image - Plot segmented image
+========================================================
+
+```r
+# Extract clusters variable for plotting it
+healthyClusters = KMC$cluster
+
+# mean intensity values of each clusters is already available under the variable name centers in KMC object
+KMC$centers[2] #mean intensity value of 2nd cluster
+```
+
+```
+[1] 0.1061945
+```
+
+```r
+# Plot the image with the clusters
+#first convert into a matrix using dim()
+dim(healthyClusters) = c(nrow(healthyMatrix), ncol(healthyMatrix))
+image(healthyClusters, axes = FALSE, col=rainbow(k))
+```
+
+![plot of chunk unnamed-chunk-54](ml-jaxjug-figure/unnamed-chunk-54-1.png)
+
+MRI Image - Choosing # of Clusters
+========================================================
+
+```r
+# get the sum of withinss for cluseter size 2 to 10.
+NumClusters = seq(2,10,1)
+SumWithinss = sapply(2:10, function(x) sum(kmeans(healthyVector, centers=x, iter.max=1000)$withinss))
+
+#SCREE plot
+plot(NumClusters, SumWithinss, type="b")
+```
+
+![plot of chunk unnamed-chunk-55](ml-jaxjug-figure/unnamed-chunk-55-1.png)
+MRI Image - Compare with test image
+========================================================
+
+```r
+tumor = read.csv("tumor.csv", header=FALSE)
+tumorMatrix = as.matrix(tumor)
+tumorVector = as.vector(tumorMatrix)
+
+#Apply clusters from before to new image, using the flexclust package
+#install.packages("flexclust")
+library(flexclust)
+
+#converting KMC into kcca object
+KMC.kcca = as.kcca(KMC, healthyVector) #Healthy vector as a training set
+tumorClusters = predict(KMC.kcca, newdata = tumorVector) #tumorvector as a testing set
+
+#Visualize the clusters
+
+#converting tumorClusters into a matrix
+dim(tumorClusters) = c(nrow(tumorMatrix), ncol(tumorMatrix))
+
+#visualising the tumorClusters
+image(tumorClusters, axes = FALSE, col=rainbow(k))
+```
+
+![plot of chunk unnamed-chunk-56](ml-jaxjug-figure/unnamed-chunk-56-1.png)
 
 Big Data (pySpark)
 ========================================================
@@ -1474,3 +2055,16 @@ cmat
 [1] 0.8401826
 ```
 
+Acknowledgement
+========================================================
+
+**Analytics Edge** https://www.edx.org/course/analytics-edge-mitx-15-071x-3
+
+**Analytics Vidhya - learning plan** https://www.analyticsvidhya.com/blog/2017/01/the-most-comprehensive-data-science-learning-plan-for-2017/
+
+**KNIME** https://www.knime.com/
+
+The End
+========================================================
+
+# Thank You

@@ -1,7 +1,7 @@
 Data Science for Developers
 ========================================================
 author: Padhu Ramalingam @pramalin
-date: September 6th 2017
+date: September 13th 2017
 autosize: true
 
 <style>
@@ -9,6 +9,21 @@ autosize: true
    font-size: 20px;
 }
 </style>
+## Completed Courses
+
+| Title            | Taught By |
+|------------------|----------|
+| Machine Learning | Stanford - Andrew Ng |
+| Deep Learning    | deeplearning.ai - Andrew Ng |
+| Machine Learning With Big Data | Coursera |
+| Analytics Edge | MITx - EDX.org |
+| Intro to Inferential Statistics | Udacity |
+| Intro to Descriptive Statistics | Udacity |
+| Introduction to R for Data Science | Datacamp |
+| Intro to Python for Data Science | Datacamp |
+| Functional Programming in Scala | Coursera |
+
+
 
 Agenda
 ========================================================
@@ -2054,7 +2069,6 @@ cmat
 ```
 [1] 0.8401826
 ```
-
 Acknowledgement
 ========================================================
 
@@ -2063,6 +2077,11 @@ Acknowledgement
 **Analytics Vidhya - learning plan** https://www.analyticsvidhya.com/blog/2017/01/the-most-comprehensive-data-science-learning-plan-for-2017/
 
 **KNIME** https://www.knime.com/
+
+What's Next
+========================================================
+
+**Deep Learning**
 
 The End
 ========================================================

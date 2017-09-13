@@ -1,15 +1,19 @@
-Data Science for Developers
-========================================================
-author: Padhu Ramalingam @pramalin
-date: September 13th 2017
-autosize: true
+---
+title: "Data Science for Developers"
+author: "Padhu Ramalingam @pramalin"
+date: "September 13th 2017"
 
-<style>
-.reveal .slides section .slideContent {
-   font-size: 20px;
-}
-</style>
-## Completed Courses
+output:
+   prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+
+    toc: true
+    number_sections: true
+
+---
+
+Completed Courses
 
 | Title            | Taught By |
 |------------------|----------|
@@ -25,8 +29,8 @@ autosize: true
 
 
 
-Agenda
-========================================================
+# Agenda
+
 * Motivation
 * Basic Stats
 * Machine Learning (small Data)
@@ -36,42 +40,44 @@ Agenda
       - Zeppelin
       - KNIME
       - Spreadsheet
-  
 * ML in Big Data
    - ML in Spark
-   
 * Deep Learning
     - Neural Networks
     - Deep Learning for Java (DL4J)
 
 
 
-Motivation - 1
-========================================================
+## Motivation - 1
 
 CCA Spark and Hadoop Developer Exam (CCA175)
 
-### Data Ingest
+**Data Ingestion**
+
 Transfer data between external systems and cluster.
-  + Import data from database into HDFS using Sqoop
-  + Export data to database from HDFS using Sqoop
-  + Load data into and out of HDFS
 
-### Transform, Stage, and Store
+  * Import data from database into HDFS using Sqoop
+  * Export data to database from HDFS using Sqoop
+  * Load data into and out of HDFS
+
+**Transform, Stage, and Store**
+
 Convert data values stored in HDFS into a new data format.
-  + Write results from an RDD back into HDFS using Spark
-  + Read and write files in a variety of file formats
-  + Perform standard ETL processes on data
 
-### Data Analysis
-Use Spark SQL.
+  * Write results from an RDD back into HDFS using Spark
+  * Read and write files in a variety of file formats
+  * Perform standard ETL processes on data
+
+**Data Analysis**
+
+  + Use Spark SQL.
   + Understand the fundamentals of querying datasets in Spark
   + Filter data using Spark
   + Join disparate datasets using Spark
 
 
-Motivation - 2
-========================================================
+## Motivation - 2
+
 Big Data Analysis with Scala and Spark
 
 * Week 1. Wikipedia Ranking - Count programming languages
@@ -81,9 +87,10 @@ Big Data Analysis with Scala and Spark
 
 Machine Learning APIs are _not_ covered. 
 
-Machine Learning Algorithms
-========================================================
+# Machine Learning Algorithms
+
 **Supervised Learning**
+
   + Regression
     - *Linear Regression*
     - *Logistic Regression*
@@ -94,18 +101,17 @@ Machine Learning Algorithms
     - *Support Vector Machine*
   
 **Unsupervised Learning**
+
   + Clustering
     - *Hierarchical Clustering*
     - *K-Means Clustering*
 
 
-
-ML Algorithms & Applications
-========================================================
+## ML Algorithms & Applications
 
 | Algorithm | Application Examples | Assignments |
-|-----------|----------------------|-------------|
-|	Linear Regression |  Wine, Moneyball | Is Climate Change caused by human, predicting test score, Detecting Flu epidemic via search queries, Predicting Life expectancy from State data |
+|-----------|----------------------|-------------------------------------------------------|
+|	Linear Regression |  Wine, Moneyball | Is Climate Change caused by human?, predicting test score, Detecting Flu epidemic via search queries, Predicting Life expectancy from State data |
 |	Logistic Regression | Modeling an Expert, The Framingham Heart Study, Election forecasting | Predict popularity of a song, Predicting Parole Violators, Predicting Loan Repayment, Predicting Baseball World Series Champion |
 |	Trees	| Predicting Supreme Court Decisions, The D2Hawkeye Story (Predict health care cost) | Social Experiment - Understanding why people vote, Letter recognition, Predict earning from Census data,   |
 |	Text Analytics	| Turning Tweets into Knowledge, IBM Watson | Detecting vandalism on Wikipedia, Automating reviews in medicine (is it clinical trial?), seperating Spam, |
@@ -113,29 +119,28 @@ ML Algorithms & Applications
 |	Linear Optimization	| Airline Revenue Management, Radiation Therapy | Investment management, Outsourcing strategy in Italian textiles, Gasoline blending, Farm produce sales strategy |
 |	Integer Optimization| Sports Scheduling, eHarmony, operating room scheduler | Selecting profitable hotel sites, Assigning Sales regions, class assignments in elementary school  |
 
-Data Structures
-========================================================
+# Data Structures
 
-# $Data Structures + Algorithms = Programs$
+$Data Structures + Algorithms = Programs$
    Niklaus Wirth
 ![](./assets/algorithms-data-structures-programs.jpg)
 
-Basic Calculations
-========================================================
+## Basic Calculations
+
 ```{r}
 8*6
 2^16
 ```
 
-Functions
-========================================================
+## Functions
+
 ```{r}
 sqrt(2)
 abs(-65)
 ```
 
-Variables (Scalar)
-========================================================
+## Variables (Scalar)
+
 ``` {r}
 SquareRoot2 = sqrt(2)
 # or SquareRoot2 <- sqrt(2)
@@ -143,8 +148,8 @@ SquareRoot2 = sqrt(2)
 ```
 
 
-Vectors
-========================================================
+## Vectors
+
 ```{r}
 Country = c("Brazil", "China", "India","Switzerland","USA")
 LifeExpectancy = c(74,76,65,83,79)
@@ -156,8 +161,8 @@ Sequence = seq(0,100,2)
 Sequence
 ```
 
-Data Frames
-========================================================
+## Data Frames
+
 ```{r}
 CountryData = data.frame(Country, LifeExpectancy) # constructed with vectors
 CountryData
@@ -173,20 +178,19 @@ AllCountryData
 ```
 
 
-Loading CSV Files
-========================================================
+## Loading CSV Files
 
 ```{r}
 
 WHO = read.csv("WHO.csv")
 str(WHO)
 ```
-WHO Data Set 
-========================================================
+## WHO Data Set 
+
 This dataset contains recent statistics about 194 countries from the World
 Health Organization (*WHO*).
 
-| Variable | Descreption |
+| Variable | Description |
 |----------|---------------------------------|
 | *Country* | Country name |
 | *Region* | the region the country is in | 
@@ -200,17 +204,16 @@ Health Organization (*WHO*).
 | *GNI* | and the gross national income per capita |
 
 
-Stats Summary
-========================================================
+## Stats Summary
 
 ```{r}
 summary(WHO)
 ```
 
-## $$sd = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
+$$sd = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
 
-Basic data analysis
-========================================================
+# Basic data analysis
+
 ```{r}
 #Q:What is the mean value of the "Over60" variable?
 mean(WHO$Over60)
@@ -222,30 +225,35 @@ WHO$Country[183]
 #Q:Which country has the largest literacy rate?
 WHO$Country[which.max(WHO$LiteracyRate)]
 ```
-Vizualization - Histograms
-========================================================
-```{r fig.width=10, fig.height=10,out.extra='style="float:center"'}
+
+## Vizualization - Histograms
+
+```{r out.extra='style="float:center"'}
 
 hist(WHO$CellularSubscribers)
 ```
 
-Vizualization -  Box plot
-========================================================
-```{r  fig.width=10, fig.height=10,out.extra='style="float:left"'}
-boxplot(WHO$LifeExpectancy ~ WHO$Region, xlab = "", ylab = "Life Expectancy", main = "Life Expectancy of Countries by Region")
+## Vizualization -  Box plot
+
+```{r }
+boxplot(WHO$LifeExpectancy ~ WHO$Region,
+        xlab = "", ylab = "Life Expectancy",
+        main = "Life Expectancy of Countries by Region")
 
 ```
-Vizualization -  Summary Tables
-========================================================
+
+
+## Vizualization -  Summary Tables
+
 ```{r}
 table(WHO$Region)
 tapply(WHO$LifeExpectancy, WHO$Region, mean)
 #tapply(WHO$LiteracyRate, WHO$Region, min, na.rm=TRUE)
 ```
 
-Linear Regression
-========================================================
-# $$\hat{y} = a_0 + a_1 * x_1 + a_2 * x_2 + ...$$
+# Linear Regression
+
+$$\hat{y} = a_0 + a_1 * x_1 + a_2 * x_2 + ...$$
 ```{r}
 # best fit line - y = 3x + 2 
 x<-c(0,1,1)
@@ -264,8 +272,8 @@ text(1.5,9,labels="Regression Line",cex = 2)
 
 
 ```
-Linear Regression - Correlation
-========================================================
+
+## Linear Regression - Correlation
 
 **What is the baseline prediction?**
  
@@ -285,10 +293,10 @@ Linear Regression - Correlation
   
   *R^2 = 1 - 18/24 = 0.25.*
 
-Wine Quality - Data Set
-========================================================
+## Wine Quality - Data Set
+
 | Variable | Description |
-|-----------|----------------------------------------|  
+|-----------|-------------------------------------------------------------------------------|  
 | Year | The year the wine was produced.|
 | Price | A measurement of wine quality computed by Ashenfelter.|
 |WinterRain | The amount of winter rain the year the wine was produced, measured in millimeters.|
@@ -297,14 +305,15 @@ Wine Quality - Data Set
 |Age | The age of the wine, relative to 1983.|
 |FrancePop | The population of France the year the wine was produced.|
 
-Wine Quality - Linear Regression
-========================================================
+### Wine Quality - Linear Regression
+
  [Video] https://www.youtube.com/watch?v=vI3envXmyDs
 ```{r}
 
 wine = read.csv("Wine.csv")
 str(wine)
 ```
+
 ```{r,echo=FALSE}
 #plot(Wine)
 # quick review
@@ -312,34 +321,35 @@ plot(wine$Price ~ wine$AGST)
 m1 <- lm(Price ~ AGST, data = wine)
 abline(m1)
 
-```{r,echo=FALSE,out.extra='style="float:left"'}
+```{r echo=FALSE}
 plot(wine$Price ~ wine$HarvestRain)
 m2 <- lm(Price ~ HarvestRain, data = wine)
 abline(m2)
+```
 
-```{r,echo=FALSE,out.extra='style="float:left"'}
+```{r echo=FALSE}
 plot(wine$Price ~ wine$WinterRain)
 m3 <- lm(Price ~ WinterRain, data = wine)
 abline(m3)
 
 ```
 
-Wine Quality - Summary
-========================================================
+### Wine Quality - Summary
+
 ```{r}
 summary(wine)
 ```
 
-Wine Quality - Model 1
-========================================================
+### Wine Quality - Model 1
+
 ```{r}
 model1<-lm(Price ~ AGST, data=wine)
 summary(model1)
 
 ```
 
-Wine Quality - Model 1 Errors
-========================================================
+### Wine Quality - Model 1 Errors
+
 ```{r}
 # Sum of Squared Errors
 model1$residuals
@@ -347,8 +357,8 @@ SSE<-sum(model1$residuals^2)
 SSE
 ```
 
-Wine Quality - Model 2
-========================================================
+### Wine Quality - Model 2
+
 ```{r}
 # Linear Regression (two variables)
 model2<-lm(Price ~ AGST + HarvestRain, data=wine)
@@ -359,8 +369,8 @@ SSE<-sum(model2$residuals^2)
 SSE
 ```
 
-Wine Quality - Model 3
-========================================================
+### Wine Quality - Model 3
+
 ```{r}
 # Linear Regression (all variables)
 model3<-lm(Price ~ AGST + HarvestRain + WinterRain + Age + FrancePop, data=wine)
@@ -371,8 +381,8 @@ SSE<-sum(model3$residuals^2)
 SSE
 ```
 
-Wine Quality - Model 4
-========================================================
+### Wine Quality - Model 4
+
 ```{r}
 # Remove FrancePop
 model4<-lm(Price ~ AGST + HarvestRain + WinterRain + Age, data=wine)
@@ -382,21 +392,20 @@ summary(model4)
 SSE<-sum(model4$residuals^2)
 SSE
 ```
-Wine Quality - Multicollinearity
-========================================================
+
+### Wine Quality - Multicollinearity
+
 ```{r}
 # Correlations
 cor(wine) #correlation matrix 
-
-
 
 model5<-lm(Price ~ AGST + HarvestRain + WinterRain, data=wine) # Remove Age and FrancePop as they were highly  correlated
 summary(model5)
 #removing both Age & FrancePop results in lowering of R-squared. We should remove FrancePop as intuitively Age of Wine is a better predictor of Price of Wine
 ```
 
-Wine Quality - Predictions
-========================================================
+### Wine Quality - Predictions
+
 ```{r}
 # Read in test set
 wineTest<-read.csv("WineTest.csv")
@@ -412,19 +421,18 @@ SST<-sum((wineTest$Price - mean(wine$Price))^2)
 1 - SSE/SST
 ```
 
-Logistic Regression
-========================================================
+# Logistic Regression
 
-## $$P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$$
-## $$=\frac{1}{1 + e^{-logit}}$$
+ $$P(y=1)=\frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2)}}$$
+ $$=\frac{1}{1 + e^{-logit}}$$
 ```{r, echo=FALSE}
 logFunc <- function(x) {1 / (1+exp(-x))}
 xlab = expression("beta_0 + beta_1*x_1 + beta_2*x_2 + ... + beta_k*x_k")
 curve(logFunc, from=-4.5, to=4.5, xlab=xlab, ylab="P(y=1)")
 ```
 
-THE FRAMINGHAM HEART STUDY
-========================================================
+## THE FRAMINGHAM HEART STUDY
+
 ```{r}
 framingham = read.csv("framingham.csv")
 # Look at structure
@@ -440,16 +448,17 @@ split = sample.split(framingham$TenYearCHD, SplitRatio = 0.65)
 train = subset(framingham, split==TRUE)
 test = subset(framingham, split==FALSE)
 ```
-THE FRAMINGHAM HEART STUDY - Logistic Regression
-========================================================
+
+### THE FRAMINGHAM HEART STUDY - Logistic Regression
+
 ```{r}
 # Logistic Regression Model
 framinghamLog = glm(TenYearCHD ~ ., data = train, family=binomial)
 summary(framinghamLog)
 ```
 
-THE FRAMINGHAM HEART STUDY - Predictions
-========================================================
+### THE FRAMINGHAM HEART STUDY - Predictions
+
 ```{r}
 # Predictions on the test set
 predictTest = predict(framinghamLog, type="response", newdata=test)
@@ -467,8 +476,8 @@ prop.table(table(framingham$TenYearCHD))
 #Our model barely beats the baseline model.Is our model worthy?
 ```
 
-Modeling the Expert
-========================================================
+## Modeling the Expert
+
 ```{r}
 # Read in dataset
 quality = read.csv("quality.csv")
@@ -483,10 +492,11 @@ table(quality$PoorCare)
 98/131
 #This is the baseline model which we will try to beat with our logistic model
 ```
-Modeling the Expert - Data Set
-========================================================
+
+### Modeling the Expert - Data Set
+
 | Variable   | Description         |
-|------------|------------------------------------|
+|------------|------------------------------------------------------------------------------|
 | MemberID | identifying number. |
 | InpatientDays | number of inpatient visits, or number of days the person spent in the hospital. |
 | ERVisits | number of times the patient visited the emergency room. |
@@ -502,8 +512,9 @@ Modeling the Expert - Data Set
 | AcuteDrugGapSmall | fraction of acute drugs that were refilled quickly after the prescription ran out. |
 | PoorCare | outcome is equal to 1 if the patient had poor care, and equal to 0 if the patient had good care. |
 
-Modeling the Expert - Visualization
-========================================================
+
+### Modeling the Expert - Visualization
+
 ```{r, echo=FALSE}
 qualityFilter = quality[quality$PoorCare==1,] # Stores which observations had good care
 plot(quality$OfficeVisits, quality$Narcotics, pch=20, cex=2, col="green") # plots all observations in green
@@ -511,8 +522,9 @@ points(qualityFilter$OfficeVisits, qualityFilter$Narcotics, col="red", pch=20, c
 lines(c(-2,30),c(30,-2), col="blue", lwd=3) # This line helps us to see that above a certain point there seems to be more and more patients with good care.
 
 ```
-Modeling the Expert - Split Samples
-========================================================
+
+### Modeling the Expert - Split Samples
+
 ```{r}
 # Install and load caTools package
 #install.packages("caTools")
@@ -531,8 +543,8 @@ nrow(qualityTrain)
 nrow(qualityTest)
 ```
 
-Modeling the Expert - Logistic Regression
-========================================================
+### Modeling the Expert - Logistic Regression
+
 ```{r}
 
 # Logistic Regression Model
@@ -549,8 +561,9 @@ summary(predictTrain) # since we are dealing with probabilities, all the nos wil
 tapply(predictTrain, qualityTrain$PoorCare, mean) #avg prediction for each of the TRUE outcomes
 
 ```
-Modeling the Expert - Thresholding
-========================================================
+
+### Modeling the Expert - Thresholding
+
 ```{r}
 # Confusion matrix for threshold of 0.5
 table(qualityTrain$PoorCare, predictTrain > 0.5) #first arg is for the rows(true coutcomes) and second arg is for the col labelling(predicted outcomes)
@@ -571,8 +584,9 @@ c(16/2, 54/74)
 #So the big question is how to select the threshold value.
 
 ```
-Modeling the Expert - ROC
-========================================================
+
+### Modeling the Expert - ROC
+
 ```{r}
 # Install and load ROCR package
 #install.packages("ROCR")
@@ -588,8 +602,9 @@ ROCRperf = performance(ROCRpred, "tpr", "fpr") #This defines what we want to plo
 plot(ROCRperf, colorize=TRUE, print.cutoffs.at=seq(0,1,by=0.1), text.adj=c(-0.2,1.7))
 
 ```
-Modeling the Expert - Conclusion
-========================================================
+
+### Modeling the Expert - Conclusion
+
 **Given this ROC curve, which threshold would you pick if you wanted to correctly identify a small group of patients who are receiving the worst care with high confidence?**
 
 *0.7*
@@ -607,8 +622,7 @@ The thresholds 0.2 and 0.3 both identify more of the true positives, but they ma
 EXPLANATION:The threshold 0.3 is the best choice in this scenerio. The threshold 0.2 also identifies over half of the patients receiving poor care, but it makes many more false positive mistakes. The thresholds 0.7 and 0.8 don't identify at least half of the patients receiving poor care.
 
 
-Classification and Regression Trees (CART)
-========================================================
+# Classification and Regression Trees (CART)
 
 This plot shows sample data for two independent variables, _x_ and _y_, and each data point is colored by the outcome variable, red or gray.
 
@@ -629,20 +643,21 @@ Some advantages of _CART_ are that:
 * it is a __very interpretable__ model.
 
 
-Predicting Supreme Court Decisions
-========================================================
+## Predicting Supreme Court Decisions
+
 ```{r}
 stevens = read.csv("stevens.csv", stringsAsFactor = TRUE)
 str(stevens)
 ```
 
-Predicting Supreme Court Decisions - Data Set
-========================================================
+
+### Predicting Supreme Court Decisions - Data Set
+
 | Variable | Description |
 |----------|------------------------------------------------------------|
 | Docket | A unique identifier for each case. |
 | Term | The year of the case.|
-| Circuit | The circuit court of origin of the case. One of 1st - ??? 11th, Federal, or D.C.|
+| Circuit | The circuit court of origin of the case. One of 1st - 11th, Federal, or D.C.|
 | Issue | The issue area of the case. Examples are criminal procedure, civil rights, privacy, etc.|
 | Petitioner | The type of petitioner in the case. Examples are an employer, an employee, the United States, etc.|
 | Respondent | The type of respondent in the case. Examples are an employer, an employee, the United States, etc.|
@@ -650,13 +665,15 @@ Predicting Supreme Court Decisions - Data Set
 | Unconst | Whether or not the petitioner argued that a law or practice is unconstitutional.|
 | Reverse | Whether or not Justice Stevens voted to reverse the case.|
 
-Predicting Supreme Court Decisions - Summary
-========================================================
+
+### Predicting Supreme Court Decisions - Summary
+
 ```{r}
 summary(stevens)
 ```
-Predicting Supreme Court Decisions - Logistic Regression
-========================================================
+
+### Predicting Supreme Court Decisions - Logistic Regression
+
 ```{r}
 #remove the variables that are not interesting, `Docket` and `Term`.
 stevensless <- stevens[, -c(1, 2)]
@@ -667,8 +684,9 @@ Train1 = subset(stevensless, spl1==TRUE)
 Test1 = subset(stevensless, spl1==FALSE)
 
 ```
-Predicting Supreme Court Decisions - Logistic Regression Summary
-=================================================================
+
+### Predicting Supreme Court Decisions - Logistic Regression Summary
+
 ```{r}
 #Fit _Logistic Regression_ model
 #As a reference we also fit a _logistic regression_ model to the _training_ data set:
@@ -676,8 +694,8 @@ model_LogRegr <- glm(Reverse ~ ., data = Train1, family = binomial)
 summary(model_LogRegr)
 ```
 
-Predicting Supreme Court Decisions - Logistic Regression Accuracy
-=================================================================
+### Predicting Supreme Court Decisions - Logistic Regression Accuracy
+
 ```{r}
 
 #Out-of-Sample predictions of the _Logistic Regression_ model
@@ -689,8 +707,8 @@ accu_LR <- (cmat_LR[1,1] + cmat_LR[2,2])/sum(cmat_LR)
 accu_LR
 ```
 
-Predicting Supreme Court Decisions - Sample Split
-========================================================
+### Predicting Supreme Court Decisions - Sample Split
+
 ```{r}
 library(caTools)
 set.seed(100) # to get the same split everytime
@@ -707,16 +725,16 @@ library(rpart.plot)
 library(randomForest)
 ```
 
-Predicting Supreme Court Decisions - CART
-========================================================
+### Predicting Supreme Court Decisions - CART
+
 ```{r}
 StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data =StevensTrain, minbucket=25)
 
 prp(StevensTree)
 ```
 
-Predicting Supreme Court Decisions - bucket size selection
-========================================================
+### Predicting Supreme Court Decisions - bucket size selection
+
 ```{r}
 set.seed(100)
 spl = sample.split(StevensTrain$Reverse, SplitRatio = 0.5)
@@ -732,8 +750,8 @@ StevensPredict2 = predict(StevensTree2, newdata = StevensValidateTest, type="cla
 StevensPredict3 = predict(StevensTree3, newdata = StevensValidateTest, type="class")
 ```
 
-Predicting Supreme Court Decisions - Compare trees
-========================================================
+### Predicting Supreme Court Decisions - Compare trees
+
 ```{r}
 table(StevensValidateTest$Reverse, StevensPredict1) # 5
 table(StevensValidateTest$Reverse, StevensPredict2) # 15
@@ -742,8 +760,8 @@ table(StevensValidateTest$Reverse, StevensPredict3) # 25
 ```
 The best selection for min bucket is 25.
 
-Predicting Supreme Court Decisions - Final result
-========================================================
+### Predicting Supreme Court Decisions - Final result
+
 ```{r}
 StevensTreeFinal = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, method="class", data =StevensTrain, minbucket=25)
 StevensPredictTest = predict(StevensTreeFinal, newdata = StevensTest, type="class")
@@ -759,16 +777,16 @@ an accuracy of 65:9%.
 
 
 
-Image Segmentation - Hierarchical Clustring
-========================================================
+# Image Segmentation - Hierarchical Clustring
+
    [Analytics Edge Course Material] (file:///C:/home/presentations/ml-jaxjug/Unit6_Clustering.html)
 ```{r}
 flower = read.csv("flower.csv", header=FALSE)
 str(flower)
 ```
 
-Image Segmentation - Data preperation
-========================================================
+### Image Segmentation - Data preperation
+
 ```{r}
 flowerMatrix = as.matrix(flower)
 str(flowerMatrix)
@@ -779,8 +797,9 @@ image(flowerMatrix,axes=FALSE,col=grey(seq(0,1,length=256)))
 flowerVector = as.vector(flowerMatrix)
 str(flowerVector)
 ```
-Image Segmentation - Distances
-========================================================
+
+### Image Segmentation - Distances
+
 $$distance(a,b) = \sqrt{\sum_{i=1}^N {(a_i + b_i)^2}} $$
 
 **Genres:**
@@ -799,8 +818,8 @@ Batman Forever: (0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0)
 
 $$distnace(Toy Story, Batman Forever) =  \sqrt{(0-0)^2 + (0-1)^2 + (0-1)^2 + (1-0)^2 +  ...} = 15$$
 
-Image Segmentation - dendrogram
-========================================================
+### Image Segmentation - dendrogram
+
 ```{r}
 #Compute "euclidean" distances
 
@@ -816,16 +835,16 @@ plot(clusterIntensity)
 rect.hclust(clusterIntensity, k = 3, border = "red")
 ```
 
-Image Segmentation - Split Clusters
-========================================================
+### Image Segmentation - Split Clusters
+
 ```{r}
 #lets split the data into these 3 clusters
 flowerClusters = cutree(clusterIntensity, k = 3)
 flowerClusters
 ```
 
-Image Segmentation - Plot
-========================================================
+### Image Segmentation - Plot
+
 ```{r}
 # Find mean intensity values of each of these 3 clusters
 tapply(flowerVector, flowerClusters, mean)
@@ -837,8 +856,8 @@ dim(flowerClusters) = c(50,50)
 image(flowerClusters, axes = FALSE)
 ```
 
-MRI Image - Analysis
-========================================================
+## MRI Image - Analysis
+
 ```{r}
 # Let's try this with an MRI image of the brain
 #healthy.csv dataframe consists of matrix of intensity values 
@@ -849,8 +868,9 @@ healthyMatrix = as.matrix(healthy)
 str(healthyMatrix)
 
 ```
-MRI Image - Healthy Scan
-========================================================
+
+### MRI Image - Healthy Scan
+
 ```{r}
 #we can see that the image is 566 by 646 ... considerably larger than the flower
 
@@ -858,8 +878,8 @@ MRI Image - Healthy Scan
 image(healthyMatrix,axes=FALSE,col=grey(seq(0,1,length=256)))
 ```
 
-MRI Image - # of cacluations
-========================================================
+### MRI Image - # of cacluations
+
 ```{r}
 # Hierarchial clustering  by computing the distance vector
 healthyVector = as.vector(healthyMatrix)
@@ -877,8 +897,8 @@ n=365636
 n*(n-1)/2
 ```
 
-MRI Image - Create K - Means clusters
-========================================================
+### MRI Image - Create K - Means clusters
+
 ```{r}
 # Specify number of clusters (Depends upon what you want to extract from the image)
 k = 5
@@ -892,8 +912,8 @@ KMC = kmeans(healthyVector, centers = k, iter.max = 1000)
 str(KMC)
 ```
 
-MRI Image - Plot segmented image
-========================================================
+### MRI Image - Plot segmented image
+
 ```{r}
 # Extract clusters variable for plotting it
 healthyClusters = KMC$cluster
@@ -907,8 +927,8 @@ dim(healthyClusters) = c(nrow(healthyMatrix), ncol(healthyMatrix))
 image(healthyClusters, axes = FALSE, col=rainbow(k))
 ```
 
-MRI Image - Choosing # of Clusters
-========================================================
+### MRI Image - Choosing # of Clusters
+
 ```{r}
 
 # get the sum of withinss for cluseter size 2 to 10.
@@ -918,8 +938,9 @@ SumWithinss = sapply(2:10, function(x) sum(kmeans(healthyVector, centers=x, iter
 #SCREE plot
 plot(NumClusters, SumWithinss, type="b")
 ```
-MRI Image - Compare with test image
-========================================================
+
+### MRI Image - Compare with test image
+
 ```{r}
 tumor = read.csv("tumor.csv", header=FALSE)
 tumorMatrix = as.matrix(tumor)
@@ -942,12 +963,13 @@ dim(tumorClusters) = c(nrow(tumorMatrix), ncol(tumorMatrix))
 image(tumorClusters, axes = FALSE, col=rainbow(k))
 ```
 
-Big Data (pySpark)
-========================================================
+# Big Data (pySpark)
+
    [PySpark code] (file:///C:/home/presentations/ml-jaxjug/classification.py)
 
-pySpark - compared to R
-========================================================
+
+## pySpark - compared to R
+
 ```{r}
 weather = read.csv("daily_weather.csv")
 
@@ -972,8 +994,9 @@ cmat = table(test$low_humidity_day, predictWeather)
 cmat
 (cmat[1,1] + cmat[2,2])/sum(cmat)
 ```
-Acknowledgement
-========================================================
+
+# Acknowledgement
+
 
 **Analytics Edge** https://www.edx.org/course/analytics-edge-mitx-15-071x-3
 
@@ -981,12 +1004,11 @@ Acknowledgement
 
 **KNIME** https://www.knime.com/
 
-What's Next
-========================================================
+# What's Next
+
 
 **Deep Learning**
 
-The End
-========================================================
+# The End
 
-# Thank You
+Thank You
